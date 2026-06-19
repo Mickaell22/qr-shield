@@ -27,11 +27,20 @@ Endpoints disponibles:
 - `POST http://localhost:8000/v1/analyze` — analiza una URL
 - `http://localhost:8000/docs` — Swagger UI interactiva
 
-Ejemplo de request:
+Ejemplo de request — URL segura (veredicto verde):
 ```bash
 curl -X POST http://localhost:8000/v1/analyze \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com"}'
+# {"verdict":"green","score":0,"reasons":[]}
+```
+
+Ejemplo de request — URL larga sospechosa (veredicto amarillo, heuristica L1):
+```bash
+curl -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com/'"$(printf 'x%.0s' {1..200})"'"}'
+# {"verdict":"yellow","score":30,"reasons":["URL excede 100 caracteres (longitud ...)"]}
 ```
 
 ## Tests
