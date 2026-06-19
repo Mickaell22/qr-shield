@@ -1,130 +1,103 @@
-# Índice de Archivos Originales del Proyecto NovaTools
+# Índice de Documentos del Proyecto NovaTools — QR Shield
 
-Este documento lista los 8 archivos originales proporcionados y sus nombres completos, para que puedas renombrar tus archivos `.md` correctamente sin perder información en el título.
-
----
-
-## 1. A6 NovaTools (Moran Vera Mickaell).xlsx - Hoja "Portada"
-
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell).xlsx` (Hoja "Portada")
-
-**Contenido resumido:**
-- Información general del proyecto (Universidad de Guayaquil, Facultad de Ciencias Matemáticas y Físicas, Carrera de Software).
-- Detalles de la asignatura "ELABORACIÓN DE PROYECTOS", Paralelo `SOF-S-NO-9-2`, Modalidad Virtual.
-- Nombre del equipo: **NovaTools**.
-- Integrantes y líder: **Moran Vera Mickaell Adrian**.
-- Fecha: `2026-05-15`.
-- Tema completo del proyecto.
+Resumen de los 8 documentos académicos de `Doc/` (Sprint 0, período 2026-2027 Ciclo I).
+Proyecto: *Implementación de una solución multiplataforma para la identificación de
+códigos QR y detección temprana de amenazas asociadas a ataques de quishing.*
+Autor: Morán Vera Mickaell Adrián — Equipo: NovaTools — Tutora/PO: Ing. Angela Yanza Montalván.
 
 ---
 
-## 2. A6 NovaTools (Moran Vera Mickaell).xlsx - Hoja "Anteproyecto"
+## 1- Registro de Proyecto.md
 
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell).xlsx` (Hoja "Anteproyecto")
+Conversión del libro Excel original (hojas Portada, Anteproyecto, Anexo1).
 
-**Contenido resumido:**
-- Tema de investigación (referencia a la celda `=Portada!C38`).
-- Problemática detallada sobre el quishing en Ecuador y la Universidad de Guayaquil.
-- Objetivos (General y 4 Específicos).
-- Justificación e importancia del proyecto.
-- Recursos humanos, hardware, software y bibliográficos.
-- Involucrados (beneficiarios directos e indirectos).
-- Cronograma de actividades (enlace).
+- **Portada:** datos institucionales (Universidad de Guayaquil, FCMF, Carrera de Software, semestre 2026-2027 CI, modalidad Virtual), equipo **NovaTools**, líder **Morán Vera Mickaell Adrián**, fecha `2026-06-07`, tema completo del proyecto.
+- **Anteproyecto:** problemática del quishing en Ecuador (67% de usuarios de billeteras digitales entre 18-35 años, alerta del Mintel jul-2025, crecimiento x5 ago-nov 2025), objetivo general + 4 específicos, justificación e importancia, recursos (humanos, hardware, software/servicios, bibliográficos), involucrados (beneficiarios directos e indirectos e institucionales).
+- **Anexo1:** matriz de involucrados con **9 actores** clasificados por **Poder / Interés** (tutora y autor en Poder Alto / Interés Alto; estudiantes FCMF en Poder Bajo / Interés Alto).
 
 ---
 
-## 3. A6 NovaTools (Moran Vera Mickaell).xlsx - Hoja "Anexo1"
+## 2- Anteproyecto Moran Vera Mickaell.md
 
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell).xlsx` (Hoja "Anexo1")
+Propuesta formal de **Trabajo de Integración Curricular** (formato institucional UG).
 
-**Contenido resumido:**
-- Matriz de involucrados con 9 actores clave.
-- Clasificación de cada involucrado según su nivel de **Poder** (Alto/Medio/Bajo) e **Interés** (Alto/Medio/Bajo).
-- Ejemplos: Tutora académica (Poder Alto / Interés Alto), Estudiantes UG (Poder Bajo / Interés Alto).
-
----
-
-## 4. A6 NovaTools (Moran Vera Mickaell) Acta de Constitucion.docx
-
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell) Acta de Constitucion.docx`
-
-**Contenido resumido:**
-- **Información del Proyecto:** Empresa Ejecutora (NovaTools - UG), fechas (01/04/2026 al 31/07/2026), Patrocinador (Ing. Angela Yanza Montalván), Gerente (Morán Vera Mickaell Adrián).
-- **Justificación:** Crecimiento del quishing, ausencia de soluciones en Ecuador.
-- **Objetivos y Criterios SMART:** General (detectar ≥85% de URLs maliciosas) y 4 específicos.
-- **Alcance:** Dentro (motor de detección, extensión Chromium, app Android) y Fuera (iOS, navegadores no Chromium, mantenimiento).
-- **Entregables:** 7 entregables principales (informe, arquitectura, motor, extensión, app, validación, documentación).
-- **Requerimientos (RNF, RF, RP):** Respuesta <3 segundos, alertas rojo/amarillo/verde, SCRUM adaptado, etc.
-- **Supuestos, Exclusiones, Riesgos, Presupuesto ($66 USD).**
-- **Interesados, Gerente, Niveles de Autoridad, Equipo, Aprobaciones.**
+- Línea de investigación: *Tecnologías, procesos y desarrollo industrial* / Sublínea: *Sistemas de información, seguridad, arquitectura de redes y software*. Tipo: **Proyecto Informático → Desarrollo de sistemas → Desarrollo Software UG**.
+- Planteamiento del problema, objetivos (general + 4 específicos), **alcance** (incluye / no incluye), justificación **técnica y académica**.
+- Metodología: investigación (cuantitativa/cualitativa) + **SCRUM adaptado a proyecto individual** (Daily Standups reemplazados por la bitácora de commits Conventional Commits).
+- **Presupuesto $66 USD** (Railway $60 + dominio $6) y **cronograma de 6 actividades** abr-jul 2026.
+- Incluye el formulario oficial de tipos de titulación (marcado *Desarrollo Software UG*), requisitos mínimos por tipo, datos de contacto y firma del estudiante.
 
 ---
 
-## 5. A6 NovaTools (Moran Vera Mickaell) Acta de Constitucion.pdf
+## 3- Presentacion Proyecto.md
 
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell) Acta de Constitucion.pdf`
+Versión resumida / orientada a diapositivas del anteproyecto. Tutor citado: **Ph.D. Jenny Ortiz Zambrano**.
 
-**Contenido resumido:**
-- Versión en PDF del mismo documento anterior (Acta de Constitución).
-- El contenido es sustancialmente idéntico al del archivo `.docx`, con diferencias únicamente de formato y paginación.
-- Incluye todas las secciones: Información, Justificación, Objetivos SMART, Alcance, Entregables, Requerimientos, Supuestos, Exclusiones, Riesgos, Cronograma, Presupuesto, Interesados, Autoridades, y Aprobaciones.
-
----
-
-## 6. A6 NovaTools (Moran Vera Mickaell) Anteproyecto.docx
-
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell) Anteproyecto.docx`
-
-**Contenido resumido:**
-- **Propuesta de Trabajo de Integración Curricular** para el período 2026-2027 Ciclo I.
-- **Línea y Sublínea de investigación:** Tecnologías, procesos y desarrollo industrial / Sistemas de información, seguridad, arquitectura de redes y software.
-- **Tema completo del proyecto.**
-- **Planteamiento del problema** (detallado, 67% de usuarios de billeteras digitales en Ecuador, crecimiento del quishing x5 en 2025).
-- **Objetivos** (General y 4 Específicos).
-- **Alcance** (Qué incluye y qué no incluye).
-- **Justificación** (Técnica y Académica).
-- **Metodología:** Investigación (cuantitativa/cualitativa) y Desarrollo (SCRUM adaptado a proyecto individual).
-- **Presupuesto ($66 USD)** y **Cronograma** (6 actividades de abril a julio 2026).
-- **Tipo de proyecto:** Desarrollo de sistemas - Desarrollo Software UG.
-- **Datos del estudiante** y firmas.
+- Tabla de contenido de 12 secciones: introducción, generalidades, tema/tipo, problemática, objetivos, alcance, justificación, metodología, recursos, presupuesto, cronograma, anexos.
+- Resume el mismo contenido del anteproyecto en formato condensado (bullets y tablas).
+- **Anexos:** originalidad del tema (búsqueda en biblioteca CISC y listado EP 2025-2026 C2), entorno de validación (FCMF-UG), y enlace a diapositivas en Canva.
 
 ---
 
-## 7. A6 NovaTools (Moran Vera Mickaell) Anteproyecto.pdf
+## 4- Acta de Constitucion Moran Vera Mickaell.md
 
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell) Anteproyecto.pdf`
+Acta de constitución (project charter) del proyecto.
 
-**Contenido resumido:**
-- Versión en PDF del mismo documento anterior (Anteproyecto).
-- Contenido idéntico al del archivo `.docx`, incluyendo:
-    - Portada con datos del estudiante y docente.
-    - Planteamiento del problema.
-    - Objetivos general y específicos.
-    - Alcance (incluye y no incluye).
-    - Justificación (técnica y académica).
-    - Metodología de investigación y desarrollo (SCRUM).
-    - Presupuesto detallado ($66 USD).
-    - Cronograma de actividades (tabla).
-    - Tipo de proyecto (Proyecto Informático - Desarrollo Software UG).
-    - Datos de contacto y firmas.
+- **Información del proyecto:** empresa ejecutora NovaTools-UG, fechas 01/04/2026 – 31/07/2026 (Sprint 0), patrocinador Ing. Angela Yanza Montalván, gerente Morán Vera Mickaell Adrián.
+- Justificación, **objetivos con criterios SMART** (objetivo general: detectar/clasificar ≥ **85%** de URLs maliciosas usando el dataset histórico de PhishTank como benchmark; cobertura de pruebas unitarias ≥ 70%).
+- Alcance dentro/fuera, **7 entregables principales**, requerimientos de alto nivel (**RNF / RF / RP**), supuestos, exclusiones, **5 riesgos** con mitigación, cronograma de hitos, presupuesto $66, registro de interesados, niveles de autoridad del gerente, equipo asignado y aprobaciones.
 
 ---
 
-## 8. A6 NovaTools (Moran Vera Mickaell) Cronograma.pdf
+## 5- Matriz de requerimientos Moran Vera Mickaell.md
 
-**Nombre original completo:** `A6 NovaTools (Moran Vera Mickaell) Cronograma.pdf`
+Matriz de **14 requerimientos** (RF-001 a RF-008, RNF-009 a RNF-014), cada uno con responsable, definición, complejidad, prioridad, urgencia (fecha límite), riesgo, criterio de aceptación, estatus (*En Análisis*) y fuente.
 
-**Contenido resumido:**
-- **Cronograma de Actividades** en formato de tabla y diagrama de Gantt (barras azules).
-- **6 actividades principales** con fechas de inicio y fin:
-    1. Aprobación del tema y planificación del Sprint 0 (01/04/2026 - 07/04/2026, 7 días).
-    2. Sprint 0 – Cap. 1: Planteamiento, objetivos, justificación, alcance (08/04/2026 - 28/04/2026, 21 días).
-    3. Sprint 0 – Cap. 2: Marco teórico (quishing, APIs, legal) (29/04/2026 - 26/05/2026, 28 días).
-    4. Sprint 0 – Cap. 3: Metodología, SCRUM, factibilidad, arquitectura (27/05/2026 - 23/06/2026, 28 días).
-    5. Sprint 0 – Diseño y maquetación del front (extensión Chromium + app Android) (24/06/2026 - 14/07/2026, 21 días).
-    6. Revisión integral, correcciones y entrega final (15/07/2026 - 31/07/2026, 17 días).
-- **Período académico:** 01/04/2026 al 31/07/2026.
+- **RF-001/002/003:** contrato del motor (URL → veredicto + score), esquema **multicapa L1-L5 en cascada con corto-circuito**, y heurísticas propias de L1 (acortadores, IP literal, longitud anómala, TLD sospechoso, punycode, desviación léxica).
+- **RF-004/005/006:** extensión Chromium (detección de QR en página), app Flutter (cámara + galería, mín. Android 10/API 29), alerta semáforo antes de redirigir.
+- **RF-007/008:** configuración de parámetros y telemetría anónima + panel de métricas.
+- **RNF-009 a 014:** tiempo de respuesta **P95 ≤ 3s**, cumplimiento de la **LOPDP** (sin PII), compatibilidad Chromium MV3 y Android 10+, despliegue **HTTPS sobre Railway** con degradación controlada, y repositorio Git versionado.
 
 ---
 
-*Fin del índice de archivos originales.*
+## 6- EDT_NovaTools.md
+
+**Estructura de Desglose del Trabajo (EDT/WBS)** del proyecto.
+
+- `1.0` Sistema de detección de QR maliciosos para estudiantes de la FCMF-UG.
+- `1.1` Documentación académica → `1.1.1` documento de titulación (Caps. 1, 2 y 3), `1.1.2` artefactos SCRUM.
+- `1.2` Motor de detección → `1.2.1` backend HTTPS sobre Railway, `1.2.2` motor **multicapa L1-L5** (heurísticas + URLhaus + Google Safe Browsing + VirusTotal en cascada).
+- `1.3` Frontends → `1.3.1` extensión Chromium (UI/UX + lógica de detección), `1.3.2` app móvil Flutter (UI/UX + escaneo cámara/galería).
+
+---
+
+## 7- Cronograma de Actividades - Moran Vera Mickaell.md
+
+**Cronograma tipo Gantt** del Sprint 0 (período 01/04/2026 – 31/07/2026), con 6 actividades:
+
+1. Aprobación del tema y planificación del Sprint 0 (01–07/04, 7 días).
+2. Cap. 1: planteamiento, objetivos, justificación y alcance (08–28/04, 21 días).
+3. Cap. 2: marco teórico (quishing, detección de QR, APIs, legal) (29/04–26/05, 28 días).
+4. Cap. 3: metodología, SCRUM, población/muestra, factibilidad y arquitectura (27/05–23/06, 28 días).
+5. Diseño y maquetación del front (extensión + app Flutter) (24/06–14/07, 21 días).
+6. Revisión integral, correcciones y entrega final (15–31/07, 17 días).
+
+---
+
+## 8- Fases - Moran Vera Mickaell.md
+
+Desarrollo del proyecto bajo la **Metodología de Marco Lógico** (7 fases).
+
+- **Fase 1 — Análisis del Problema Central:** análisis causal con **10 causas/consecuencias** + diagrama de Ishikawa.
+- **Fase 2 — Análisis de Involucrados:** matrices Poder-Interés, Influencia-Impacto y Poder-Influencia, y mapa de actores (9 involucrados).
+- **Fase 3 — Análisis de Problemas:** árbol de problemas.
+- **Fase 4 — Análisis de Objetivos:** árbol de objetivos.
+- **Fase 5 — Análisis de Alternativas:** árbol de alternativas.
+- **Fase 6 — Diseño Estratégico:** Estructura Analítica del Proyecto (EAP).
+- **Fase 7 — Matriz de Marco Lógico (MML).**
+
+---
+
+*Índice de documentos del proyecto QR Shield — NovaTools.*
+</content>
+</invoke>
