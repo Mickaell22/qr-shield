@@ -118,3 +118,8 @@ motor/data/*.csv
 *.p12
 secrets/
 credentials/
+
+# ---------- Claude Code (instrucciones locales, no se publican) ----------
+CLAUDE.md
+CLAUDE.local.md
+.claude/
