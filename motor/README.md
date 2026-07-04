@@ -43,6 +43,22 @@ curl -X POST http://localhost:8000/v1/analyze \
 # {"verdict":"yellow","score":30,"reasons":["URL excede 100 caracteres (longitud ...)"]}
 ```
 
+Ejemplo de request — host es una IP literal (veredicto amarillo, heuristica L1):
+```bash
+curl -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "http://192.168.1.1/login"}'
+# {"verdict":"yellow","score":40,"reasons":["El host es una IP literal (192.168.1.1) en vez de un dominio"]}
+```
+
+Ejemplo de request — host es un acortador conocido (veredicto amarillo, heuristica L1):
+```bash
+curl -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://bit.ly/abc123"}'
+# {"verdict":"yellow","score":25,"reasons":["El host es un acortador de URLs conocido (bit.ly)"]}
+```
+
 ## Tests
 
 ```bash
