@@ -4,7 +4,12 @@
 
 <p>
   <strong>Protege a la comunidad universitaria contra ataques de <em>quishing</em>.</strong><br/>
-  Extension Chromium + app Android + motor de deteccion centralizado.
+  Motor de deteccion centralizado, con extension Chromium y app Android planificadas.
+</p>
+
+<p>
+  <em>Hoy funciona el motor con la capa L1 (heuristicas locales) cubierta por tests.<br/>
+  Las capas L2 a L5 y los dos clientes estan en el <a href="#roadmap">roadmap</a>.</em>
 </p>
 
 <p>
@@ -78,12 +83,20 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 
 ## Caracteristicas
 
+### Implementado (`v0.1.0-dev`)
+
+- **API REST versionada** (`/v1/analyze`) en FastAPI, con documentacion interactiva.
+- **Capa L1 de heuristicas locales** — 5 checks puros sin I/O: URL larga, IP literal,
+  acortadores, TLD sospechoso y punycode (incluye hosts IDN no normalizados).
+- **Semaforo de veredicto** verde / amarillo, calculado sin depender de servicios externos.
+- **Tests automatizados** con pytest sobre las heuristicas y el endpoint.
+
+### Planificado
+
+- **Cascada L2 a L5** que minimiza llamadas a APIs externas y respeta cuotas free tier.
+- **Cache persistente** de veredictos en PostgreSQL para evitar re-analisis.
 - **Escaneo nativo de QR** en Android con ML Kit de Google.
 - **Interceptacion en navegador** de codigos QR embebidos en paginas.
-- **Cascada de 5 capas** que minimiza llamadas a APIs externas y respeta cuotas free tier.
-- **API REST versionada** (`/v1/`) consumida por ambos frontends.
-- **Cache persistente** de veredictos en PostgreSQL para evitar re-analisis.
-- **Semaforo visual** rojo / amarillo / verde — accesible y entendible.
 
 ---
 
@@ -100,7 +113,7 @@ flowchart LR
         API[FastAPI<br/>api.qrshield.novamicktools.com/v1]
         L1[L1 Heuristicas locales]
         L2[(L2 Cache PostgreSQL)]
-        L3[L3 PhishTank local]
+        L3[L3 URLhaus local]
         L4[L4 Google Safe Browsing]
         L5[L5 VirusTotal]
         API --> L1 --> L2 --> L3 --> L4 --> L5
@@ -110,7 +123,13 @@ flowchart LR
     E -->|POST /v1/analyze| API
     API -->|verde / amarillo / rojo| A
     API -->|verde / amarillo / rojo| E
+
+    classDef pendiente stroke-dasharray: 5 5,opacity:0.6
+    class A,E,L2,L3,L4,L5 pendiente
 ```
+
+> Los nodos con borde punteado son los planificados. Hoy el flujo real es
+> `POST /v1/analyze` → **L1** → veredicto.
 
 > **Por que motor centralizado y no SDK embebido:**
 > las API keys de Google Safe Browsing y VirusTotal **no pueden vivir en el cliente**,
@@ -124,13 +143,17 @@ flowchart LR
 El motor evalua cada URL en cascada. Cada capa puede cortar la cadena si la
 evidencia es suficiente, evitando llamadas innecesarias a APIs externas.
 
-| # | Capa | Velocidad | Costo | Que detecta |
-|---|---|---|---|---|
-| **L1** | Heuristicas locales | Instantanea | Gratis | Shorteners, IP literales, TLDs sospechosos, URLs >100 chars, punycode |
-| **L2** | Cache PostgreSQL | <50 ms | Gratis | Veredictos previos con TTL configurable |
-| **L3** | PhishTank local | <100 ms | Gratis | Dataset oficial de phishing (refresh cada 12h) |
-| **L4** | Google Safe Browsing | ~300 ms | 10k req/dia free | Malware, phishing, software no deseado |
-| **L5** | VirusTotal | ~800 ms | 4 req/min free | Veredicto consolidado de 70+ motores antivirus |
+| # | Capa | Estado | Velocidad | Costo | Que detecta |
+|---|---|---|---|---|---|
+| **L1** | Heuristicas locales | **Implementada** | Instantanea | Gratis | Shorteners, IP literales, TLDs sospechosos, URLs >100 chars, punycode |
+| **L2** | Cache PostgreSQL | Planificada | <50 ms | Gratis | Veredictos previos con TTL configurable |
+| **L3** | URLhaus (abuse.ch) | Planificada | <100 ms | Gratis | Feed CSV de URLs maliciosas en vivo (refresh cada 12h) |
+| **L4** | Google Safe Browsing | Planificada | ~300 ms | 10k req/dia free | Malware, phishing, software no deseado |
+| **L5** | VirusTotal | Planificada | ~800 ms | 4 req/min free | Veredicto consolidado de 70+ motores antivirus |
+
+> **Sobre PhishTank:** cerro los registros nuevos, asi que no sirve como feed en vivo. Su
+> dataset historico se usa solo como benchmark de validacion (la meta de deteccion ≥85%);
+> la fuente L3 en vivo es **URLhaus**.
 
 > **SLA:** si una capa supera 1.5s, el motor devuelve veredicto parcial con
 > las capas que respondieron. Mejor un amarillo a tiempo que un rojo tarde.
@@ -144,25 +167,29 @@ evidencia es suficiente, evitando llamadas innecesarias a APIs externas.
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-Motor-009688?style=for-the-badge" />
     </td>
-    <td>Python 3.11 · FastAPI · Uvicorn · Pydantic · PostgreSQL · pytest · ruff</td>
+    <td>Python 3.11 · FastAPI · Uvicorn · Pydantic · pytest · ruff<br/>
+    <sub>PostgreSQL entra en v0.2.0 con la cache L2</sub></td>
   </tr>
   <tr>
     <td align="center">
       <img src="https://img.shields.io/badge/-App-02569B?style=for-the-badge" />
     </td>
-    <td>Flutter (Android) · Google ML Kit (QR scanner) · Dio · Riverpod</td>
+    <td>Flutter (Android) · Google ML Kit (QR scanner) · Dio · Riverpod<br/>
+    <sub>Stack elegido — se implementa en v0.6.0</sub></td>
   </tr>
   <tr>
     <td align="center">
       <img src="https://img.shields.io/badge/-Extension-4285F4?style=for-the-badge" />
     </td>
-    <td>TypeScript · Manifest V3 · Vite · jsQR</td>
+    <td>TypeScript · Manifest V3 · Vite · jsQR<br/>
+    <sub>Stack elegido — se implementa en v0.7.0</sub></td>
   </tr>
   <tr>
     <td align="center">
       <img src="https://img.shields.io/badge/-Infra-0B0D0E?style=for-the-badge" />
     </td>
-    <td>Railway (deploy) · GitHub Actions (CI/CD) · Let's Encrypt</td>
+    <td>Railway (deploy) · GitHub Actions (CI/CD) · Let's Encrypt<br/>
+    <sub>Stack elegido — se implementa en v0.5.0</sub></td>
   </tr>
 </table>
 
@@ -172,13 +199,16 @@ evidencia es suficiente, evitando llamadas innecesarias a APIs externas.
 
 ```
 qr-shield/
-├── motor/          # API REST del motor de deteccion (FastAPI)
-├── extension/      # Extension Chromium (TypeScript + MV3)
-├── app/            # App Android (Flutter)
+├── motor/          # API REST del motor de deteccion (FastAPI)   <- unico con codigo hoy
+├── extension/      # Extension Chromium (TypeScript + MV3)       <- reservado, v0.7.0
+├── app/            # App Android (Flutter)                       <- reservado, v0.6.0
 ├── shared/         # Tipos compartidos y datasets de prueba
-├── infra/          # Configuracion de despliegue (Railway, GH Actions)
+├── infra/          # Configuracion de despliegue (Railway, GH)   <- reservado, v0.5.0
 └── Doc/            # Documentacion academica (anteproyecto, acta, cronograma)
 ```
+
+Los directorios marcados como reservados estan vacios a proposito: fijan la estructura
+del monorepo desde el inicio, y se llenan en el release que indica el roadmap.
 
 ---
 
@@ -219,7 +249,7 @@ gantt
     section Motor
     v0.1.0 Scaffold + L1     :done,    v01, 2026-06-01, 14d
     v0.2.0 Cache L2          :         v02, after v01, 14d
-    v0.3.0 PhishTank L3      :         v03, after v02, 14d
+    v0.3.0 URLhaus L3        :         v03, after v02, 14d
     v0.4.0 Google SB L4      :         v04, after v03, 14d
     v0.5.0 VirusTotal + Railway :     v05, after v04, 14d
     section Clientes
@@ -234,7 +264,7 @@ gantt
 |---|---|
 | `v0.1.0` Motor + heuristicas L1 | En curso |
 | `v0.2.0` Cache PostgreSQL (L2) | Planeado |
-| `v0.3.0` PhishTank local (L3) | Planeado |
+| `v0.3.0` URLhaus local (L3) | Planeado |
 | `v0.4.0` Google Safe Browsing (L4) | Planeado |
 | `v0.5.0` VirusTotal (L5) + deploy Railway | Planeado |
 | `v0.6.0` App Android (Flutter) | Planeado |
