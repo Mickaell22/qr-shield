@@ -59,6 +59,22 @@ curl -X POST http://localhost:8000/v1/analyze \
 # {"verdict":"yellow","score":25,"reasons":["El host es un acortador de URLs conocido (bit.ly)"]}
 ```
 
+Ejemplo de request — TLD con alta tasa de abuso (veredicto amarillo, heuristica L1):
+```bash
+curl -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "http://pagos-uni.tk/login"}'
+# {"verdict":"yellow","score":35,"reasons":["El dominio usa un TLD con alta tasa de abuso (.tk)"]}
+```
+
+Ejemplo de request — host punycode / homografo (veredicto amarillo, heuristica L1):
+```bash
+curl -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://xn--pple-43d.com/login"}'
+# {"verdict":"yellow","score":50,"reasons":["El host usa caracteres internacionales / punycode (xn--pple-43d.com), posible ataque homografo"]}
+```
+
 ## Tests
 
 ```bash

@@ -1,10 +1,14 @@
 from app.detectors.l1_heuristics import (
     IP_LITERAL_SCORE,
+    PUNYCODE_SCORE,
     SHORTENER_SCORE,
+    SUSPICIOUS_TLD_SCORE,
     URL_LENGTH_SCORE,
     URL_LENGTH_THRESHOLD,
     check_ip_literal,
+    check_punycode,
     check_shortener,
+    check_suspicious_tld,
     check_url_length,
     run_l1,
 )
@@ -74,6 +78,53 @@ def test_shortener_normal_domain_does_not_trigger():
     assert result.reason == ""
 
 
+def test_suspicious_tld_freenom_host_triggers():
+    result = check_suspicious_tld("http://banco-seguro.tk/login")
+    assert result.triggered is True
+    assert result.score == SUSPICIOUS_TLD_SCORE
+    assert ".tk" in result.reason
+
+
+def test_suspicious_tld_ignores_case():
+    assert check_suspicious_tld("http://EJEMPLO.XYZ/x").triggered is True
+
+
+def test_suspicious_tld_common_tld_does_not_trigger():
+    result = check_suspicious_tld("https://ejemplo.com/login")
+    assert result.triggered is False
+    assert result.score == 0
+    assert result.reason == ""
+
+
+def test_suspicious_tld_ip_literal_does_not_trigger():
+    assert check_suspicious_tld("http://192.168.1.1/login").triggered is False
+
+
+def test_punycode_encoded_host_triggers():
+    result = check_punycode("https://xn--80ak6aa92e.com/login")
+    assert result.triggered is True
+    assert result.score == PUNYCODE_SCORE
+    assert "xn--" in result.reason
+
+
+def test_punycode_unicode_host_triggers():
+    # urlparse deja el host IDN sin convertir; la heuristica lo detecta igual.
+    result = check_punycode("https://аpple.com/login")
+    assert result.triggered is True
+    assert result.score == PUNYCODE_SCORE
+
+
+def test_punycode_ascii_host_does_not_trigger():
+    result = check_punycode("https://apple.com/login")
+    assert result.triggered is False
+    assert result.score == 0
+    assert result.reason == ""
+
+
+def test_punycode_does_not_confuse_xn_inside_label():
+    assert check_punycode("https://proxn--dat.com/x").triggered is False
+
+
 def test_run_l1_returns_empty_for_safe_url():
     assert run_l1("https://ejemplo.com") == []
 
@@ -96,3 +147,14 @@ def test_run_l1_returns_hit_for_long_url():
     assert len(hits) == 1
     assert hits[0].triggered is True
     assert hits[0].score == URL_LENGTH_SCORE
+
+
+def test_run_l1_returns_hit_for_suspicious_tld():
+    hits = run_l1("http://pagos-uni.tk/login")
+    assert len(hits) == 1
+    assert hits[0].score == SUSPICIOUS_TLD_SCORE
+
+
+def test_run_l1_acumula_varias_senales():
+    hits = run_l1("http://xn--80ak6aa92e.tk/login")
+    assert {h.score for h in hits} == {SUSPICIOUS_TLD_SCORE, PUNYCODE_SCORE}
