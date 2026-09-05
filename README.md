@@ -1,9 +1,9 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=20,24,30&height=200&section=header&text=QR%20Shield&fontSize=70&fontColor=fff&fontAlignY=38&desc=Detector%20de%20QR%20maliciosos%20%E2%80%94%20Anti-quishing&descAlignY=60&descSize=18" alt="QR Shield banner" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=20,24,30&height=200&section=header&text=Umbral&fontSize=70&fontColor=fff&fontAlignY=38&desc=Deteccion%20de%20suplantacion%20en%20codigos%20QR%20%E2%80%94%20Anti-quishing&descAlignY=60&descSize=18" alt="Umbral banner" />
 
 <p>
-  <strong>Protege a la comunidad universitaria contra ataques de <em>quishing</em>.</strong><br/>
+  <strong>Descubre a donde lleva de verdad un codigo QR, antes de abrirlo.</strong><br/>
   Motor de deteccion centralizado, con extension Chromium y app Android planificadas.
 </p>
 
@@ -49,10 +49,11 @@
 
 ## Sobre el proyecto
 
-**QR Shield** es un detector de codigos QR maliciosos disenado para prevenir
-ataques de **quishing** (phishing por QR), una de las tecnicas de ingenieria
-social que mas crece. Cuando un usuario escanea un QR sospechoso desde la app
-o hace click en uno desde el navegador, QR Shield analiza la URL destino y
+**Umbral** es un sistema de deteccion de suplantacion en codigos QR, orientado a
+prevenir ataques de **quishing** (phishing por QR), una de las tecnicas de
+ingenieria social que mas crece. Cuando un usuario escanea un QR sospechoso desde
+la app o hace click en uno desde el navegador, el motor **resuelve la cadena de
+redirecciones hasta el destino real**, analiza esa URL terminal en cascada y
 muestra un semaforo:
 
 <div align="center">
@@ -62,6 +63,10 @@ muestra un semaforo:
   &nbsp;
   <img alt="Rojo" src="https://img.shields.io/badge/%E2%97%8F-MALICIOSO-critical?style=for-the-badge" />
 </div>
+
+> **Titulo del proyecto:** *Sistema inteligente para la deteccion de suplantacion
+> en codigos QR mediante analisis en cascada con trazabilidad de redirecciones
+> aplicable a diversos entornos.*
 
 > **Contexto academico:** proyecto de titulacion en Ingenieria de Software,
 > Facultad de Ciencias Matematicas y Fisicas, Universidad de Guayaquil.
@@ -78,6 +83,8 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 | Extension Chromium (Chrome, Brave, Edge) | iOS y navegadores no Chromium |
 | App Android (Flutter) | Sandboxing dinamico de paginas |
 | Motor REST con cascada L1-L5 | Mantenimiento post-entrega de tesis |
+| Trazabilidad de cadenas de redireccion | Redirecciones por JavaScript o `meta refresh` |
+| Validacion de dominios contra listados conocidos | Generacion, firma o emision de codigos QR |
 
 ---
 
@@ -86,6 +93,9 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 ### Implementado (`v0.1.0-dev`)
 
 - **API REST versionada** (`/v1/analyze`) en FastAPI, con documentacion interactiva.
+- **Trazabilidad de redirecciones (RF-009)** — resuelve la cadena de saltos HTTP hasta
+  el destino terminal antes de analizar, expone la cadena completa y detecta bucles,
+  limites y timeouts. Es lo que impide que un acortador esconda el destino real.
 - **Capa L1 de heuristicas locales** — 5 checks puros sin I/O: URL larga, IP literal,
   acortadores, TLD sospechoso y punycode (incluye hosts IDN no normalizados).
 - **Scoring ponderado** — cada heuristica aporta su peso, el motor los suma (tope 100)
@@ -96,6 +106,10 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 ### Planificado
 
 - **Cascada L2 a L5** que minimiza llamadas a APIs externas y respeta cuotas free tier.
+- **Validacion de dominios** contra listados de dominios legitimos, y antiguedad del
+  dominio via WHOIS como senal adicional.
+- **Metricas por capa** — en que capa corto la cascada, tiempo por capa y comparacion
+  de la tasa de deteccion con y sin la trazabilidad activada.
 - **Cache persistente** de veredictos en PostgreSQL para evitar re-analisis.
 - **Escaneo nativo de QR** en Android con ML Kit de Google.
 - **Interceptacion en navegador** de codigos QR embebidos en paginas.
@@ -113,12 +127,13 @@ flowchart LR
 
     subgraph Motor[Motor de deteccion API REST]
         API[FastAPI<br/>api.qrshield.novamicktools.com/v1]
+        TR[Trazabilidad de redirecciones<br/>resuelve la URL terminal]
         L1[L1 Heuristicas locales]
         L2[(L2 Cache PostgreSQL)]
         L3[L3 URLhaus local]
         L4[L4 Google Safe Browsing]
         L5[L5 VirusTotal]
-        API --> L1 --> L2 --> L3 --> L4 --> L5
+        API --> TR --> L1 --> L2 --> L3 --> L4 --> L5
     end
 
     A -->|POST /v1/analyze| API
@@ -131,7 +146,7 @@ flowchart LR
 ```
 
 > Los nodos con borde punteado son los planificados. Hoy el flujo real es
-> `POST /v1/analyze` → **L1** → veredicto.
+> `POST /v1/analyze` → **trazabilidad** → **L1** → veredicto.
 
 > **Por que motor centralizado y no SDK embebido:**
 > las API keys de Google Safe Browsing y VirusTotal **no pueden vivir en el cliente**,
@@ -143,11 +158,15 @@ flowchart LR
 ## Capas de deteccion (L1 a L5)
 
 El motor evalua cada URL en cascada. Cada capa puede cortar la cadena si la
-evidencia es suficiente, evitando llamadas innecesarias a APIs externas.
+evidencia es suficiente, evitando llamadas innecesarias a APIs externas. **L1
+agrupa tres componentes locales**: la trazabilidad resuelve primero el destino
+real, y sobre esa URL terminal corren las heuristicas y la validacion de dominios.
 
 | # | Capa | Estado | Velocidad | Costo | Que detecta |
 |---|---|---|---|---|---|
+| **L1** | Trazabilidad de redirecciones *(paso previo)* | **Implementada** | Depende de la red | Gratis | Destino real detras de acortadores y cadenas de redireccion |
 | **L1** | Heuristicas locales | **Implementada** | Instantanea | Gratis | Shorteners, IP literales, TLDs sospechosos, URLs >100 chars, punycode |
+| **L1** | Validacion de dominios | Planificada | Instantanea | Gratis | Dominio destino contra listados legitimos + antiguedad del registro |
 | **L2** | Cache PostgreSQL | Planificada | <50 ms | Gratis | Veredictos previos con TTL configurable |
 | **L3** | URLhaus (abuse.ch) | Planificada | <100 ms | Gratis | Feed CSV de URLs maliciosas en vivo (refresh cada 12h) |
 | **L4** | Google Safe Browsing | Planificada | ~300 ms | 10k req/dia free | Malware, phishing, software no deseado |
@@ -245,7 +264,7 @@ curl -X POST http://localhost:8000/v1/analyze \
 
 ```mermaid
 gantt
-    title Plan de releases QR Shield
+    title Plan de releases
     dateFormat YYYY-MM-DD
     axisFormat %b
     section Motor

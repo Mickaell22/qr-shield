@@ -1,6 +1,7 @@
-# Motor QR Shield
+# Motor de deteccion
 
-API REST de deteccion de QR maliciosos. Backend central de QR Shield (NovaTools).
+API REST para la deteccion de suplantacion en codigos QR mediante analisis en
+cascada con trazabilidad de redirecciones. Backend central del sistema (NovaTools).
 
 ## Stack
 - Python 3.11+
@@ -32,7 +33,10 @@ Ejemplo de request — URL segura (veredicto verde):
 curl -X POST http://localhost:8000/v1/analyze \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com"}'
-# {"verdict":"green","score":0,"reasons":[]}
+# {"verdict":"green","score":0,"reasons":[],"final_url":"https://example.com/",
+#  "redirects":{"chain":["https://example.com/"],"hops":0,"resolved":true,
+#               "rewrote_url":false,"reason":""}}
+# Los ejemplos siguientes omiten "final_url" y "redirects" por brevedad.
 ```
 
 Ejemplo de request — URL larga sospechosa (veredicto amarillo, heuristica L1):
@@ -83,6 +87,50 @@ curl -X POST http://localhost:8000/v1/analyze \
 # {"verdict":"red","score":85,"reasons":["El dominio usa un TLD con alta tasa de abuso (.tk)","El host usa caracteres internacionales / punycode (...), posible ataque homografo"]}
 ```
 
+## Trazabilidad de redirecciones (RF-009)
+
+Antes de aplicar las heuristicas, el motor resuelve la cadena de saltos HTTP de
+la URL hasta su destino terminal, y **las capas analizan esa URL terminal**. Sin
+esto, un acortador esconde el destino: `bit.ly/x8k2m` no dispara ninguna
+heuristica (dominio conocido, sin caracteres raros, HTTPS valido) mientras que
+su destino real `pagos-banc0.xyz` si.
+
+La respuesta expone la cadena completa, no solo el destino:
+
+| Campo | Significado |
+|---|---|
+| `final_url` | URL terminal sobre la que corrio el analisis |
+| `redirects.chain` | Cadena completa recorrida, incluida la URL original |
+| `redirects.hops` | Cantidad de saltos resueltos |
+| `redirects.rewrote_url` | Si el modulo cambio la URL analizada |
+| `redirects.resolved` | `false` si la cadena se corto antes de terminar |
+| `redirects.reason` | Por que quedo sin resolver (limite, timeout, bucle, red) |
+
+Comportamiento:
+- Sigue `301`, `302`, `303`, `307`, `308` leyendo el header `Location`
+  (resuelve tambien los `Location` relativos).
+- Pide solo cabeceras: `HEAD`, con fallback a `GET` en streaming sin descargar
+  el cuerpo si el servidor no soporta `HEAD`.
+- Detecta bucles registrando las URLs ya visitadas.
+- Si supera el limite de saltos o el presupuesto de tiempo, la reporta como **no
+  resuelta** y sigue el analisis con la ultima URL alcanzada, agregando el motivo
+  a `reasons`.
+- Bloquea destinos hacia la red interna y esquemas que no sean HTTP/HTTPS: el
+  motor hace peticiones salientes hacia una URL de origen desconocido, y sin ese
+  filtro seria un vector de SSRF.
+
+**Limitacion declarada:** no se ejecuta JavaScript, asi que las redirecciones por
+JS o por `<meta http-equiv="refresh">` quedan fuera de alcance.
+
+Todo se configura por entorno (ver `.env.example`): `REDIRECT_MAX_HOPS`,
+`REDIRECT_TIMEOUT_SECONDS`, `REDIRECT_TOTAL_TIMEOUT_SECONDS` y el interruptor
+`REDIRECT_TRACING_ENABLED`, que existe para correr el benchmark A/B con y sin el
+modulo sobre el mismo dataset.
+
+> Nota para los ejemplos de arriba: con la trazabilidad activada, una URL de
+> acortador real se resuelve primero, asi que el veredicto correspondera a su
+> destino y no al acortador.
+
 ## Scoring y veredicto
 
 Cada heuristica que dispara aporta su peso; el motor los suma y topa el total en 100.
@@ -109,7 +157,8 @@ pytest
 ```
 
 ## Roadmap de versiones
-- `v0.1.0` (actual): scaffold + heuristicas L1 + scoring ponderado
+- `v0.1.0` (actual): scaffold + heuristicas L1 + scoring ponderado +
+  trazabilidad de redirecciones
 - `v0.2.0`: cache L2 (PostgreSQL)
 - `v0.3.0`: L3 (feed local de URLhaus)
 - `v0.4.0`: L4 (Google Safe Browsing)
