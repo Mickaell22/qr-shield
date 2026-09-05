@@ -88,7 +88,9 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 - **API REST versionada** (`/v1/analyze`) en FastAPI, con documentacion interactiva.
 - **Capa L1 de heuristicas locales** — 5 checks puros sin I/O: URL larga, IP literal,
   acortadores, TLD sospechoso y punycode (incluye hosts IDN no normalizados).
-- **Semaforo de veredicto** verde / amarillo, calculado sin depender de servicios externos.
+- **Scoring ponderado** — cada heuristica aporta su peso, el motor los suma (tope 100)
+  y traduce el total en el semaforo: `0` verde, `1-59` amarillo, `60+` rojo.
+- **Semaforo de veredicto** verde / amarillo / rojo, calculado sin depender de servicios externos.
 - **Tests automatizados** con pytest sobre las heuristicas y el endpoint.
 
 ### Planificado
@@ -262,7 +264,7 @@ gantt
 
 | Hito | Estado |
 |---|---|
-| `v0.1.0` Motor + heuristicas L1 | En curso |
+| `v0.1.0` Motor + heuristicas L1 | Publicado |
 | `v0.2.0` Cache PostgreSQL (L2) | Planeado |
 | `v0.3.0` URLhaus local (L3) | Planeado |
 | `v0.4.0` Google Safe Browsing (L4) | Planeado |
