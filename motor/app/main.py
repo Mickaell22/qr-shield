@@ -24,7 +24,7 @@ app = FastAPI(
     # metadata del paquete: con un install editable esa metadata queda
     # congelada en la version con la que se instalo, y la API reportaria
     # una version vieja sin que nadie lo note.
-    version="0.1.1",
+    version="0.2.0",
     description="API de deteccion de QR maliciosos (quishing) - NovaTools",
     lifespan=lifespan,
 )

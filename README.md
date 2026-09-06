@@ -14,7 +14,7 @@
 
 <p>
   <img alt="Estado" src="https://img.shields.io/badge/estado-en%20desarrollo-orange?style=for-the-badge" />
-  <img alt="Version" src="https://img.shields.io/badge/version-v0.1.1-blue?style=for-the-badge" />
+  <img alt="Version" src="https://img.shields.io/badge/version-v0.2.0-blue?style=for-the-badge" />
   <img alt="Licencia" src="https://img.shields.io/badge/licencia-MIT-green?style=for-the-badge" />
 </p>
 
@@ -90,7 +90,7 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 
 ## Caracteristicas
 
-### Implementado (`v0.1.1`)
+### Implementado (`v0.2.0`)
 
 - **API REST versionada** (`/v1/analyze`) en FastAPI, con documentacion interactiva.
 - **Trazabilidad de redirecciones (RF-009)** — resuelve la cadena de saltos HTTP hasta
@@ -274,7 +274,7 @@ gantt
     axisFormat %b
     section Motor
     v0.1.0 Scaffold + L1     :done,    v01, 2026-06-01, 14d
-    v0.2.0 Cache L2          :         v02, after v01, 14d
+    v0.2.0 Cache L2          :done,    v02, after v01, 14d
     v0.3.0 URLhaus L3        :         v03, after v02, 14d
     v0.4.0 Google SB L4      :         v04, after v03, 14d
     v0.5.0 VirusTotal + Railway :     v05, after v04, 14d
@@ -290,7 +290,7 @@ gantt
 |---|---|
 | `v0.1.0` Motor + heuristicas L1 | Publicado |
 | `v0.1.1` Trazabilidad de redirecciones + metricas por capa | Publicado |
-| `v0.2.0` Cache PostgreSQL (L2) | En curso |
+| `v0.2.0` Cache PostgreSQL (L2) | Publicado |
 | `v0.3.0` URLhaus local (L3) | Planeado |
 | `v0.4.0` Google Safe Browsing (L4) | Planeado |
 | `v0.5.0` VirusTotal (L5) + deploy Railway | Planeado |
