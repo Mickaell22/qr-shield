@@ -6,7 +6,7 @@ cascada con trazabilidad de redirecciones. Backend central del sistema (NovaTool
 ## Stack
 - Python 3.11+
 - FastAPI + Uvicorn
-- PostgreSQL (desde v0.2.0, capa de cache L2)
+- PostgreSQL (capa de cache L2; opcional, el motor arranca sin ella)
 
 ## Setup local
 
@@ -189,16 +189,55 @@ anonimo y la URL que escaneo un usuario no tiene por que quedar en el log. Para
 el benchmark, donde hace falta cruzar cada analisis con la etiqueta del dataset,
 se activa con `METRICS_LOG_URLS=true`.
 
+## Cache de veredictos (L2)
+
+Segunda capa de la cascada: si la URL terminal ya se analizo y su veredicto
+sigue vigente, se devuelve sin consultar las capas caras (L3 feed local, L4
+Google Safe Browsing, L5 VirusTotal, esta ultima con cuota de 4 req/min). En
+medicion local, un analisis completo tarda ~40 ms y el mismo servido desde la
+cache, ~2 ms.
+
+Se configura con `DATABASE_URL`. **Sin esa variable la capa queda desactivada**
+y el motor analiza igual, sin cache: la deteccion no depende de PostgreSQL. Lo
+mismo si la base esta caida o lenta — un error de la cache degrada a analisis
+completo, nunca a un error para quien consulta.
+
+| Comportamiento | Detalle |
+|---|---|
+| Clave | Hash SHA-256 de la URL terminal; no se guarda la URL en claro |
+| TTL verde / amarillo | `CACHE_TTL_SECONDS`, por defecto 6 h |
+| TTL rojo | `CACHE_TTL_MALICIOUS_SECONDS`, por defecto 24 h |
+| Vencimiento | Se calcula con el reloj de PostgreSQL, no con el del proceso |
+| Que no se cachea | Los analisis cuya cadena de redirecciones quedo sin resolver: el veredicto es parcial |
+| Esquema | Se crea al arrancar si falta (`CREATE TABLE IF NOT EXISTS`) |
+
+El TTL es asimetrico a proposito: servir de mas un verde es un falso negativo, y
+en deteccion cuesta mas caro que servir de mas un rojo.
+
+> **Al agregar una capa nueva a la cascada, purgar la cache**
+> (`TRUNCATE verdict_cache`). Las entradas guardadas antes se calcularon con
+> menos capas, y se seguirian sirviendo como si fueran veredictos completos.
+
+La columna `source_layer` guarda que capa emitio el veredicto: `cascade`
+significa que ninguna capa lo emitio, la cascada se agoto sin senales.
+
 ## Tests
 
 ```bash
 pytest
 ```
 
+Los tests de la capa L2 contra PostgreSQL real se saltan si no hay base. Para
+correrlos, apuntar a una de pruebas (la tabla se trunca en cada test):
+
+```bash
+TEST_DATABASE_URL=postgresql://USUARIO:CLAVE@localhost:5432/BASE_TEST pytest
+```
+
 ## Roadmap de versiones
 - `v0.1.0`: scaffold + heuristicas L1 + scoring ponderado
 - `v0.1.1` (actual): trazabilidad de redirecciones + metricas por capa
-- `v0.2.0`: cache L2 (PostgreSQL)
+- `v0.2.0` (en curso): cache L2 (PostgreSQL)
 - `v0.3.0`: L3 (feed local de URLhaus)
 - `v0.4.0`: L4 (Google Safe Browsing)
 - `v0.5.0`: L5 (VirusTotal) + deploy Railway

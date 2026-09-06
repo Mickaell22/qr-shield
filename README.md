@@ -101,6 +101,9 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 - **Scoring ponderado** — cada heuristica aporta su peso, el motor los suma (tope 100)
   y traduce el total en el semaforo: `0` verde, `1-59` amarillo, `60+` rojo.
 - **Semaforo de veredicto** verde / amarillo / rojo, calculado sin depender de servicios externos.
+- **Cache de veredictos (L2)** en PostgreSQL con TTL asimetrico (mas corto para los
+  veredictos limpios), que evita re-analizar y consumir cuota externa. Es opcional:
+  sin base configurada, o con la base caida, el motor analiza igual.
 - **Metricas por capa (RF-008)** — tiempo por capa y total, capa responsable del
   veredicto, saltos de la trazabilidad y estado del interruptor A/B, en la respuesta
   y como registro JSON anonimizado.
@@ -113,7 +116,6 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
   dominio via WHOIS como senal adicional.
 - **Panel de metricas** que agregue los registros por capa y calcule precision,
   exhaustividad y la proporcion de detecciones locales (L1-L3) frente a externas (L4-L5).
-- **Cache persistente** de veredictos en PostgreSQL para evitar re-analisis.
 - **Escaneo nativo de QR** en Android con ML Kit de Google.
 - **Interceptacion en navegador** de codigos QR embebidos en paginas.
 
@@ -145,11 +147,11 @@ flowchart LR
     API -->|verde / amarillo / rojo| E
 
     classDef pendiente stroke-dasharray: 5 5,opacity:0.6
-    class A,E,L2,L3,L4,L5 pendiente
+    class A,E,L3,L4,L5 pendiente
 ```
 
 > Los nodos con borde punteado son los planificados. Hoy el flujo real es
-> `POST /v1/analyze` → **trazabilidad** → **L1** → veredicto.
+> `POST /v1/analyze` → **trazabilidad** → **L1** → **L2** → veredicto.
 
 > **Por que motor centralizado y no SDK embebido:**
 > las API keys de Google Safe Browsing y VirusTotal **no pueden vivir en el cliente**,
@@ -170,7 +172,7 @@ real, y sobre esa URL terminal corren las heuristicas y la validacion de dominio
 | **L1** | Trazabilidad de redirecciones *(paso previo)* | **Implementada** | Depende de la red | Gratis | Destino real detras de acortadores y cadenas de redireccion |
 | **L1** | Heuristicas locales | **Implementada** | Instantanea | Gratis | Shorteners, IP literales, TLDs sospechosos, URLs >100 chars, punycode |
 | **L1** | Validacion de dominios | Planificada | Instantanea | Gratis | Dominio destino contra listados legitimos + antiguedad del registro |
-| **L2** | Cache PostgreSQL | Planificada | <50 ms | Gratis | Veredictos previos con TTL configurable |
+| **L2** | Cache PostgreSQL | **Implementada** | ~2 ms medidos | Gratis | Veredictos previos con TTL configurable (6 h; 24 h si es rojo) |
 | **L3** | URLhaus (abuse.ch) | Planificada | <100 ms | Gratis | Feed CSV de URLs maliciosas en vivo (refresh cada 12h) |
 | **L4** | Google Safe Browsing | Planificada | ~300 ms | 10k req/dia free | Malware, phishing, software no deseado |
 | **L5** | VirusTotal | Planificada | ~800 ms | 4 req/min free | Veredicto consolidado de 70+ motores antivirus |
@@ -191,8 +193,8 @@ real, y sobre esa URL terminal corren las heuristicas y la validacion de dominio
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-Motor-009688?style=for-the-badge" />
     </td>
-    <td>Python 3.11 · FastAPI · Uvicorn · Pydantic · pytest · ruff<br/>
-    <sub>PostgreSQL entra en v0.2.0 con la cache L2</sub></td>
+    <td>Python 3.11 · FastAPI · Uvicorn · Pydantic · psycopg · pytest · ruff<br/>
+    <sub>PostgreSQL para la cache L2, opcional: el motor arranca sin base</sub></td>
   </tr>
   <tr>
     <td align="center">
@@ -288,7 +290,7 @@ gantt
 |---|---|
 | `v0.1.0` Motor + heuristicas L1 | Publicado |
 | `v0.1.1` Trazabilidad de redirecciones + metricas por capa | Publicado |
-| `v0.2.0` Cache PostgreSQL (L2) | Planeado |
+| `v0.2.0` Cache PostgreSQL (L2) | En curso |
 | `v0.3.0` URLhaus local (L3) | Planeado |
 | `v0.4.0` Google Safe Browsing (L4) | Planeado |
 | `v0.5.0` VirusTotal (L5) + deploy Railway | Planeado |
