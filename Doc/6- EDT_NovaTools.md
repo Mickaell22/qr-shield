@@ -2,7 +2,7 @@
 
 ## EDT NovaTools
 
-- 1.0 Sistema de detección de códigos QR maliciosos para los estudiantes de la FCMF de la Universidad de Guayaquil
+- 1.0 Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos
 - 1.1
 Documentación académica
 del proyecto de titulación
@@ -20,7 +20,8 @@ y bitácoras
 Backend del motor
 expuesto como servicio HTTPS
 sobre Railway
-- 1.2.2 Motor multicapa (L1-L5): heurísticas + URLhaus + Google Safe Browsing + VirusTotal en cascada
+- 1.2.2 Motor multicapa (L1-L5): trazabilidad de redirecciones + heurísticas locales +
+validación de dominios + URLhaus + Google Safe Browsing + VirusTotal en cascada
 - 1.3.1
 Extensión para navegadores
 basados en Chromium
@@ -48,5 +49,10 @@ en página y consulta al motor
 Lógica de escaneo de QR
 (cámara y galería)
 y consulta al motor
+- 1.2.3
+Instrumentación de métricas por capa:
+registro de la capa que emite el veredicto,
+tiempos por capa y comparación con y sin
+trazabilidad de redirecciones
 - 1.3 Frontends: extensión Chromium y aplicación móvil (Flutter)
 

@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 
 from app.api.v1 import analyze
+from app.config import PRODUCT_NAME
 
 app = FastAPI(
-    title="QR Shield Motor",
+    title=f"{PRODUCT_NAME} Motor",
     version="0.1.0",
     description="API de deteccion de QR maliciosos (quishing) - NovaTools",
 )

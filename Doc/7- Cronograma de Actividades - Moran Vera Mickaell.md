@@ -2,7 +2,7 @@
 
 ## Hoja: Cronograma
 
-| NovaTools – Solución multiplataforma para la detección de códigos QR maliciosos |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| NovaTools – Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | # | Actividad | Inicio | Fin | Días | 1 Abr | 8 Abr | 15 Abr | 22 Abr | 29 Abr | 6 May | 13 May | 20 May | 27 May | 3 Jun | 10 Jun | 17 Jun | 24 Jun | 1 Jul | 8 Jul | 15 Jul | 22 Jul | 29 Jul |
 | 1 | Aprobación del tema y planificación del Sprint 0 | 01/04/2026 | 07/04/2026 | 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
