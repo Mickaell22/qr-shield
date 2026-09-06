@@ -2,29 +2,29 @@
 
 | Empresa Ejecutora | NovaTools — Universidad de Guayaquil, FCMF, Carrera de Software |
 |----|----|
-| Nombre del Proyecto | Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+| Nombre del Proyecto | Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 | Fecha de Inicio | 01/04/2026 |
 | Fecha de Finalización esperada | 31/07/2026 (Sprint 0) — Ciclo académico 2026-2027 Ciclo I |
 | Cliente o Contratante | Unidad de Integración Curricular — Universidad de Guayaquil |
 | Patrocinador del Proyecto | Ing. Angela Yanza Montalván — Docente FCMF, Universidad de Guayaquil |
 | Gerente de Proyecto | Morán Vera Mickaell Adrián |
-| Meta/Objetivo del Proyecto | Desarrollar una solución multiplataforma para la identificación de códigos QR y la detección temprana de amenazas asociadas a ataques de quishing, dirigida a los estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil. |
-| Alcance del Proyecto | Motor de detección multicapa (L1-L5) en cascada con corto-circuito, que combina heurísticas propias con fuentes de inteligencia de amenazas (Google Safe Browsing, VirusTotal, URLhaus), dos frontends (extensión Chromium y app móvil en Flutter) y validación técnica con dataset etiquetado realizada en escenarios de uso de los estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil. Excluye iOS, navegadores no Chromium, sandboxing y mantenimiento post-entrega. |
+| Meta/Objetivo del Proyecto | Desarrollar un sistema inteligente para la detección de suplantación en códigos QR mediante un análisis en cascada con trazabilidad de redirecciones, aplicable a diversos entornos de uso. |
+| Alcance del Proyecto | Motor de detección multicapa (L1-L5) en cascada con corto-circuito, precedido por un módulo de trazabilidad que resuelve la cadena de redirecciones hasta el destino final, y que combina heurísticas propias y validación de dominios con fuentes de inteligencia de amenazas (Google Safe Browsing, VirusTotal, URLhaus); dos frontends (extensión Chromium y app móvil en Flutter); instrumentación de métricas por capa; y validación técnica sobre un dataset etiquetado. Excluye iOS, navegadores no Chromium, sandboxing, redirecciones por JavaScript o meta-refresh, la generación o firma de códigos QR y el mantenimiento post-entrega. |
 
 2.  **Justificación del Proyecto**
 
-| El quishing (phishing mediante códigos QR) representa una amenaza creciente a nivel global: de acuerdo con el Ministerio de Telecomunicaciones y Sociedad de la Información del Ecuador, los intentos de fraude digital han aumentado de forma sostenida en los últimos años, y entidades financieras como Banco Pichincha han emitido alertas específicas sobre el uso malicioso de QR para redirigir a usuarios hacia sitios falsos o instalar malware. A diferencia del phishing tradicional, la URL incrustada en un QR no es visible al usuario antes de escanear, lo que elimina la posibilidad de inspección visual previa. A pesar de la magnitud del problema, no existe en el mercado ecuatoriano una solución integrada —extensión de navegador más aplicación móvil— que analice códigos QR en tiempo real antes de que el usuario acceda al enlace. El presente proyecto aborda este vacío mediante el desarrollo de QR Shield, solución del equipo NovaTools conformada por dos frontends (extensión Chromium y app móvil) que comparten un motor de detección multicapa basado en heurísticas propias complementadas con fuentes externas de inteligencia de amenazas (Google Safe Browsing, VirusTotal, URLhaus), constituyendo así la contribución académica diferenciadora. La implementación y validación se centra en los estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil, como entorno de alta exposición diaria a códigos QR dentro del campus. |
+| El quishing (phishing mediante códigos QR) representa una amenaza creciente a nivel global: de acuerdo con el Ministerio de Telecomunicaciones y Sociedad de la Información del Ecuador, los intentos de fraude digital han aumentado de forma sostenida en los últimos años, y entidades financieras como Banco Pichincha han emitido alertas específicas sobre el uso malicioso de QR para redirigir a usuarios hacia sitios falsos o instalar malware. A diferencia del phishing tradicional, la URL incrustada en un QR no es visible al usuario antes de escanear, lo que elimina la posibilidad de inspección visual previa. A pesar de la magnitud del problema, no existe en el mercado ecuatoriano una solución integrada —extensión de navegador más aplicación móvil— que analice códigos QR en tiempo real antes de que el usuario acceda al enlace. El presente proyecto aborda este vacío mediante el desarrollo de Umbral, solución del equipo NovaTools conformada por dos frontends (extensión Chromium y app móvil) que comparten un motor de detección multicapa basado en heurísticas propias complementadas con fuentes externas de inteligencia de amenazas (Google Safe Browsing, VirusTotal, URLhaus), constituyendo así la contribución académica diferenciadora. La implementación y validación se centra en los estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil, como entorno de alta exposición diaria a códigos QR dentro del campus. |
 |----|
 
 3.  **Objetivos del Proyecto y Criterios de éxito medibles**
 
 | **Objetivo** | **Criterio de Éxito SMART** |
 |----|----|
-| GENERAL: Desarrollar una solución multiplataforma para la identificación de códigos QR y la detección temprana de amenazas asociadas a ataques de quishing, mediante un motor de análisis multicapa basado en heurísticas propias y fuentes de reputación de URLs, dirigida a los estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil. | El sistema detecta y clasifica correctamente al menos el 85 % de URLs maliciosas de un conjunto de prueba estándar (dataset histórico de PhishTank usado como benchmark de validación), validado dentro del cierre del Sprint 0 (31/07/2026). |
+| GENERAL: Desarrollar un sistema inteligente para la detección de suplantación en códigos QR mediante un motor de análisis en cascada que resuelve la trazabilidad de redirecciones y combina heurísticas propias, validación de dominios y fuentes de reputación de URLs, aplicable a diversos entornos de uso. | El sistema detecta y clasifica correctamente al menos el 85 % de URLs maliciosas de un conjunto de prueba estándar (dataset histórico de PhishTank usado como benchmark de validación), validado dentro del cierre del Sprint 0 (31/07/2026). |
 | ESPECÍFICO 1: Analizar el panorama de amenazas de quishing documentado en Ecuador y los mecanismos de detección de URLs maliciosas disponibles mediante APIs públicas. | Entrega de informe de análisis con mínimo 5 fuentes académicas o institucionales, revisado y aprobado por la tutora en la semana 3 del Sprint 0. |
 | ESPECÍFICO 2: Diseñar la arquitectura del motor de detección compartido y las interfaces de usuario de la extensión Chromium y la app Android. | Diagramas de arquitectura (UML, flujo de datos) y prototipos de interfaz aprobados por la tutora durante el Sprint 0 (junio 2026). |
 | ESPECÍFICO 3: Implementar el motor de detección y los dos frontends (extensión + app) con integración a Google Safe Browsing, VirusTotal y URLhaus. | Código funcional con cobertura de pruebas unitarias \>= 70 %, desplegado en entorno de staging (Railway) antes del cierre del Sprint 0 (31/07/2026). |
-| ESPECÍFICO 4: Validar técnicamente el funcionamiento del sistema mediante pruebas con un conjunto representativo de códigos QR maliciosos y legítimos en escenarios de uso de los estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil, evaluando métricas de precisión, exhaustividad (recall) y tiempo de respuesta. | Reporte de validación técnica con dataset etiquetado (maliciosos y legítimos) ejecutado sobre escenarios representativos de los estudiantes de la FCMF, documentando precisión, recall y tiempo de respuesta promedio del motor de detección, entregado antes del cierre del Sprint 0 (31/07/2026). |
+| ESPECÍFICO 4: Validar técnicamente el funcionamiento del sistema mediante pruebas sobre un conjunto etiquetado y representativo de códigos QR y URLs maliciosas y legítimas, evaluando precisión, exhaustividad (recall) y tiempo de respuesta desglosados por capa, así como la variación de la tasa de detección con y sin el módulo de trazabilidad de redirecciones activado. | Reporte de validación técnica con dataset etiquetado (maliciosos y legítimos), documentando precisión, recall y tiempo de respuesta por capa, la proporción de veredictos resueltos localmente (L1-L3) frente a los que requirieron consulta externa (L4-L5) y la comparación de la tasa de detección con y sin trazabilidad sobre el mismo conjunto, entregado antes del cierre del Sprint 0 (31/07/2026). |
 
 4.  **Alcance del Proyecto**
 
@@ -37,10 +37,12 @@ productos: (1) una extensión de navegador para Chromium que intercepta
 la URL al escanear un QR desde el navegador y (2) una aplicación móvil
 en Flutter que lee el QR con la cámara del dispositivo. Ambos frontends
 consultarán el motor en tiempo real y mostrarán al usuario una alerta de
-seguridad antes de redirigirlo. La validación se realizará en escenarios
-de uso de los estudiantes de la Facultad de Ciencias Matemáticas y
-Físicas de la Universidad de Guayaquil como población empírica
-representativa del entorno del campus.
+seguridad antes de redirigirlo. La validación técnica se realizará sobre un
+conjunto etiquetado de URLs maliciosas y legítimas. Los estudiantes de la
+Carrera de Software de la Facultad de Ciencias Matemáticas y Físicas de la
+Universidad de Guayaquil participan como población de estudio en el
+levantamiento de información y en las pruebas de usabilidad; no son los
+destinatarios del sistema, que es de aplicación general.
 
 ### **<u>Alcance</u>**
 
@@ -272,7 +274,7 @@ desarrollador</td>
 |----|----|----|----|
 | **Ing. Angela Yanza Montalván** | Tutora académica / Product Owner | Directo | Aprobación y auspicio del proyecto; calidad académica. |
 | **Morán Vera Mickaell Adrián** | Desarrollador / Gerente de Proyecto | Directo | Aprobación del proyecto; base para tesis; aprendizaje técnico. |
-| **Estudiantes de la FCMF** | Usuarios de validación | Directo | Herramienta funcional que proteja la seguridad de los estudiantes al escanear QR en el campus. |
+| **Estudiantes de la FCMF** | Población de estudio | Directo | Que las pruebas de usabilidad sean breves y que la herramienta evaluada resulte comprensible y usable. |
 | **Universidad de Guayaquil — FCMF** | Institución académica | Institucional | Calidad del proyecto en el repositorio institucional. |
 | **Ministerio de Telecomunicaciones (Ecuador)** | Referente institucional | Indirecto | Evidencia de amenazas de fraude digital en Ecuador. |
 | **Banco Pichincha** | Referente del sector financiero | Indirecto | Alertas sobre QR maliciosos como sustento del problema. |

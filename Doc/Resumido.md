@@ -1,9 +1,18 @@
-# Índice de Documentos del Proyecto NovaTools — QR Shield
+# Índice de Documentos del Proyecto NovaTools — Umbral
 
 Resumen de los 8 documentos académicos de `Doc/` (Sprint 0, período 2026-2027 Ciclo I).
-Proyecto: *Implementación de una solución multiplataforma para la identificación de
-códigos QR y detección temprana de amenazas asociadas a ataques de quishing.*
+Proyecto: *Sistema inteligente para la detección de suplantación en códigos QR mediante
+análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos.*
 Autor: Morán Vera Mickaell Adrián — Equipo: NovaTools — Tutora/PO: Ing. Angela Yanza Montalván.
+
+> **Replanteamiento tras la sustentación (agosto de 2026).** El proyecto fue aprobado con
+> observaciones. Se pidió sacar a la institución del título y del rol de beneficiaria,
+> incorporar un componente diferenciador y justificar comparativamente los algoritmos de
+> cada capa. En consecuencia: el título cambió al que encabeza este índice, el producto
+> pasó a llamarse **Umbral** (el nombre anterior colisionaba con un artículo ya publicado),
+> se incorporó la **trazabilidad de redirecciones** como componente diferenciador (RF-009)
+> y la Universidad de Guayaquil queda como institución de titulación, nunca como
+> beneficiaria. Los documentos de esta carpeta reflejan ese replanteamiento.
 
 ---
 
@@ -12,7 +21,7 @@ Autor: Morán Vera Mickaell Adrián — Equipo: NovaTools — Tutora/PO: Ing. An
 Conversión del libro Excel original (hojas Portada, Anteproyecto, Anexo1).
 
 - **Portada:** datos institucionales (Universidad de Guayaquil, FCMF, Carrera de Software, semestre 2026-2027 CI, modalidad Virtual), equipo **NovaTools**, líder **Morán Vera Mickaell Adrián**, fecha `2026-06-07`, tema completo del proyecto.
-- **Anteproyecto:** problemática del quishing en Ecuador (67% de usuarios de billeteras digitales entre 18-35 años, alerta del Mintel jul-2025, crecimiento x5 ago-nov 2025), objetivo general + 4 específicos, justificación e importancia, recursos (humanos, hardware, software/servicios, bibliográficos), involucrados (beneficiarios directos e indirectos e institucionales).
+- **Anteproyecto:** problemática del quishing en Ecuador (67% de usuarios de billeteras digitales entre 18-35 años, alerta del Mintel jul-2025, crecimiento x5 ago-nov 2025), objetivo general + 4 específicos, justificación e importancia, recursos (humanos, hardware, software/servicios, bibliográficos), involucrados (población de estudio, actores institucionales y de apoyo).
 - **Anexo1:** matriz de involucrados con **9 actores** clasificados por **Poder / Interés** (tutora y autor en Poder Alto / Interés Alto; estudiantes FCMF en Poder Bajo / Interés Alto).
 
 ---
@@ -51,11 +60,15 @@ Acta de constitución (project charter) del proyecto.
 
 ## 5- Matriz de requerimientos Moran Vera Mickaell.md
 
-Matriz de **14 requerimientos** (RF-001 a RF-008, RNF-009 a RNF-014), cada uno con responsable, definición, complejidad, prioridad, urgencia (fecha límite), riesgo, criterio de aceptación, estatus (*En Análisis*) y fuente.
+Matriz de **15 requerimientos** (RF-001 a RF-009, RNF-009 a RNF-014; las series RF y RNF se numeran de forma independiente, por lo que RF-009 y RNF-009 son requerimientos distintos), cada uno con responsable, definición, complejidad, prioridad, urgencia (fecha límite), riesgo, criterio de aceptación, estatus (*En Análisis*) y fuente.
 
 - **RF-001/002/003:** contrato del motor (URL → veredicto + score), esquema **multicapa L1-L5 en cascada con corto-circuito**, y heurísticas propias de L1 (acortadores, IP literal, longitud anómala, TLD sospechoso, punycode, desviación léxica).
 - **RF-004/005/006:** extensión Chromium (detección de QR en página), app Flutter (cámara + galería, mín. Android 10/API 29), alerta semáforo antes de redirigir.
 - **RF-007/008:** configuración de parámetros y telemetría anónima + panel de métricas.
+- **RF-009:** **trazabilidad de redirecciones** — resolución de la cadena de saltos hasta el
+  destino final antes de aplicar las capas de verificación, con registro de los saltos
+  recorridos, límite máximo configurable y tiempo de espera definido. Es el componente
+  diferenciador comprometido ante el tribunal.
 - **RNF-009 a 014:** tiempo de respuesta **P95 ≤ 3s**, cumplimiento de la **LOPDP** (sin PII), compatibilidad Chromium MV3 y Android 10+, despliegue **HTTPS sobre Railway** con degradación controlada, y repositorio Git versionado.
 
 ---
@@ -64,9 +77,11 @@ Matriz de **14 requerimientos** (RF-001 a RF-008, RNF-009 a RNF-014), cada uno c
 
 **Estructura de Desglose del Trabajo (EDT/WBS)** del proyecto.
 
-- `1.0` Sistema de detección de QR maliciosos para estudiantes de la FCMF-UG.
+- `1.0` Sistema inteligente para la detección de suplantación en códigos QR.
 - `1.1` Documentación académica → `1.1.1` documento de titulación (Caps. 1, 2 y 3), `1.1.2` artefactos SCRUM.
-- `1.2` Motor de detección → `1.2.1` backend HTTPS sobre Railway, `1.2.2` motor **multicapa L1-L5** (heurísticas + URLhaus + Google Safe Browsing + VirusTotal en cascada).
+- `1.2` Motor de detección → `1.2.1` backend HTTPS sobre Railway, `1.2.2` motor **multicapa L1-L5** (trazabilidad de redirecciones + heurísticas locales +
+  validación de dominios + URLhaus + Google Safe Browsing + VirusTotal en cascada),
+  `1.2.3` instrumentación de métricas por capa.
 - `1.3` Frontends → `1.3.1` extensión Chromium (UI/UX + lógica de detección), `1.3.2` app móvil Flutter (UI/UX + escaneo cámara/galería).
 
 ---
@@ -98,6 +113,6 @@ Desarrollo del proyecto bajo la **Metodología de Marco Lógico** (7 fases).
 
 ---
 
-*Índice de documentos del proyecto QR Shield — NovaTools.*
+*Índice de documentos del proyecto Umbral — NovaTools.*
 </content>
 </invoke>

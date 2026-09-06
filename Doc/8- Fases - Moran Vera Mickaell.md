@@ -8,9 +8,9 @@
 |  | Curso: |  |
 |  | SOF-S-NO-9-2 |  |
 |  | Tema: |  |
-| Implementación de una solución multiplataforma |  |  |
-| para la identificación de códigos QR y detección |  |  |
-| temprana de amenazas asociadas a ataques de quishing |  |  |
+| Sistema inteligente para la detección de suplantación |  |  |
+| en códigos QR mediante análisis en cascada con |  |  |
+| trazabilidad de redirecciones aplicable a diversos entornos |  |  |
 |  | Integrantes: |  |
 |  | Moran Vera Mickael Adrian |  |
 |  | Docente: |  |
@@ -29,7 +29,7 @@
 |  |  |  | Metodología de Marco Lógico |  |  |  |  |  |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  | Fase 1. Análisis del Problema Central |  |  |  |  |  |  |
-|  |  |  |  | Proyecto: | Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |  |  |  |
+|  |  |  |  | Proyecto: | Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |  |  |
 |  |  |  |  |  |  | 1 | Descripción del Problema Central |  |  |
 |  |  |  |  |  |  |  | 1.1 | Análisis Causal |  |
 |  |  |  |  |  |  |  |  | 1.2 | Diagrama Ishikawa |
@@ -38,7 +38,7 @@
 
 |  |  | Análisis del Problema Central |  |  |  |  |
 | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  | Proyecto: Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |  |  |
+|  |  |  | Proyecto: Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |  |
 |  |  | 1. | Descripción del problema central |  |  |  |
 |  |  | 1.1 | Análisis Causal |  |  |  |
 |  |  |  |  | N° | Causas | Consecuencias |
@@ -58,7 +58,7 @@
 |  |  |  |  | Metodología de Marco Lógico |
 | --- | --- | --- | --- | --- |
 |  |  |  |  | Fase 1. Descripciòn del Problema Central |
-|  |  |  |  | Proyecto:   Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  |  | Proyecto:   Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 |  |  | 1. | Descripción del problema central |  |
 |  |  | 1.2 | Diagrama de Ishikawa |  |
 | Ventajas |  |  |  |  |
@@ -69,7 +69,7 @@
 |  |  | Metodología de Marco Lógico |  |  |  |  |  |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  |  | Fase 2. Análisis de Involucrados |  |  |  |  |  |  |
-|  |  | Proyecto: | Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |  |  |  |  |
+|  |  | Proyecto: | Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |  |  |  |
 |  |  |  | 2.1 | Matriz de Análisis de Involucrados |  |  |  |  |
 |  |  |  |  | 2.1.1 | Matriz Poder - Interés |  |  |  |
 |  |  |  |  |  | 2.1.2 | Matriz Influencia - Impacto |  |  |
@@ -81,7 +81,7 @@
 
 | Analisis de Involucrados |  |  |  |  |
 | --- | --- | --- | --- | --- |
-|  |  | Proyecto:   Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |  |
+|  |  | Proyecto:   Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |
 |  | 2.1. | Matriz de Analisís de Involucrados |  |  |
 |  | 2.1.1 | Matriz Poder-Interés |  |  |
 |  |  | N° | Involucrados | Tipos |
@@ -89,7 +89,7 @@
 |  |  | 2 | Morán Vera Mickaell Adrián (Autor) | Directo |
 |  |  | 3 | Universidad de Guayaquil (Autoridades) | Directo |
 |  |  | 4 | Carrera de Software – FCMF | Directo |
-|  |  | 5 | Estudiantes de la UG (validación) | Directo |
+|  |  | 5 | Estudiantes de la UG (población de estudio) | Directo |
 |  |  | 6 | Usuarios de Guayaquil expuestos al quishing | Indirecto |
 |  |  | 7 | Comerciantes y PYMES que usan códigos QR | Indirecto |
 |  |  | 8 | Entidades financieras con canales QR | Indirecto |
@@ -101,7 +101,7 @@
 
 |  | Analisis de Involucrados |  |  |  |
 | --- | --- | --- | --- | --- |
-|  |  | Proyecto:    Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |  |
+|  |  | Proyecto:    Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |
 |  | 2.1. | Matriz de Analisís de Involucrados |  |  |
 |  | 2.1.2 | Matriz Influencia-Impacto |  |  |
 |  |  | N° | Involucrados | Tipos |
@@ -109,7 +109,7 @@
 |  |  | 2 | Morán Vera Mickaell Adrián (Autor) | Directo |
 |  |  | 3 | Universidad de Guayaquil (Autoridades) | Directo |
 |  |  | 4 | Carrera de Software – FCMF | Directo |
-|  |  | 5 | Estudiantes de la UG (validación) | Directo |
+|  |  | 5 | Estudiantes de la UG (población de estudio) | Directo |
 |  |  | 6 | Usuarios de Guayaquil expuestos al quishing | Indirecto |
 |  |  | 7 | Comerciantes y PYMES que usan códigos QR | Indirecto |
 |  |  | 8 | Entidades financieras con canales QR | Indirecto |
@@ -121,7 +121,7 @@
 
 |  | Analisis de Involucrados |  |  |  |
 | --- | --- | --- | --- | --- |
-|  |  | Proyecto:   Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |  |
+|  |  | Proyecto:   Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |  |
 |  | 2.1. | Matriz de Analisís de Involucrados |  |  |
 |  | 2.1.3 | Matriz Poder-Influencia |  |  |
 |  |  | N° | Involucrados | Tipos |
@@ -129,7 +129,7 @@
 |  |  | 2 | Morán Vera Mickaell Adrián (Autor) | Directo |
 |  |  | 3 | Universidad de Guayaquil (Autoridades) | Directo |
 |  |  | 4 | Carrera de Software – FCMF | Directo |
-|  |  | 5 | Estudiantes de la UG (validación) | Directo |
+|  |  | 5 | Estudiantes de la UG (población de estudio) | Directo |
 |  |  | 6 | Usuarios de Guayaquil expuestos al quishing | Indirecto |
 |  |  | 7 | Comerciantes y PYMES que usan códigos QR | Indirecto |
 |  |  | 8 | Entidades financieras con canales QR | Indirecto |
@@ -141,7 +141,7 @@
 
 | Mapa de Actores |  |
 | --- | --- |
-|  | Proyecto:  Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  | Proyecto:  Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 | 2.2. | Mapas de Actores |
 | 2.2.1 | Mapas de Actores |
 
@@ -150,13 +150,13 @@
 |  |  | Metodología de Marco Lógico |  |
 | --- | --- | --- | --- |
 |  |  | Fase 3. Análisis de Problemas |  |
-|  |  |  | Proyecto:     Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:     Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 
 ## Hoja: 3.1
 
 |  |  | Análisis de Problemas |  |
 | --- | --- | --- | --- |
-|  |  | Proyecto:    Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |  |
+|  |  | Proyecto:    Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |  |
 |  |  | 3. | Analisís de Problemas |
 |  |  | 3.1. | Árbol de Problemas |
 
@@ -165,13 +165,13 @@
 |  |  |  | Metodología de Marco Lógico |  |
 | --- | --- | --- | --- | --- |
 |  |  |  | Fase 4. Análisis de Objetivos |  |
-|  |  |  |  | Proyecto:      Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  |  | Proyecto:      Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 
 ## Hoja: 4. 1
 
 |  |  |  | Analisis de Objetivos |
 | --- | --- | --- | --- |
-|  |  |  | Proyecto:    Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:    Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 |  |  | 4. | Analisís de Objetivos |
 |  |  | 4.1. | Árbol de Objetivos |
 
@@ -180,13 +180,13 @@
 |  |  | Metodología de Marco Lógico |  |
 | --- | --- | --- | --- |
 |  |  | Fase 5. Análisis de Alternativas |  |
-|  |  |  | Proyecto:     Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:     Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 
 ## Hoja: 5.1
 
 |  |  | Análisis de Alternativas |  |
 | --- | --- | --- | --- |
-|  |  |  | Proyecto:    Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:    Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 |  |  | 5. | Analisís de Alternativas |
 |  |  | 5.1. | Árbol de Alternativas |
 
@@ -195,13 +195,13 @@
 |  |  | Metodología de Marco Lógico |  |
 | --- | --- | --- | --- |
 |  |  | Fase 6. Diseño de Estratégico |  |
-|  |  |  | Proyecto:     Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:     Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 
 ## Hoja: 6.1
 
 |  | Diseño de Estratégico |  |  |
 | --- | --- | --- | --- |
-|  |  |  | Proyecto:    Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:    Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 |  |  | 6. | Diseño de Estratégico |
 |  |  | 6.1. | Estructura Analítica del Proyecto (EAP) |
 
@@ -210,13 +210,13 @@
 |  |  | Metodología de Marco Lógico |  |
 | --- | --- | --- | --- |
 |  |  | Fase 7. Análisis de Matriz del Marco Lógico |  |
-|  |  |  | Proyecto:     Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  | Proyecto:     Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 
 ## Hoja: 7.1
 
 |  |  | Matriz de Marco Lógico |  |  |
 | --- | --- | --- | --- | --- |
-|  |  |  |  | Proyecto:    Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing |
+|  |  |  |  | Proyecto:    Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos |
 |  |  | 7. | Análisis de matriz del marco lógico |  |
 |  |  | 7.1. | Matriz del Marco Lógico |  |
 

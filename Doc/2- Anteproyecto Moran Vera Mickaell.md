@@ -70,9 +70,9 @@ PERTENECE (opcional):</strong></td>
 <tr>
 <td colspan="2"
 style="text-align: center;"><p><strong>TEMA:</strong></p>
-<p>Implementación de una solución multiplataforma para la identificación
-de códigos QR y detección temprana de amenazas asociadas a ataques de
-quishing</p></td>
+<p>Sistema inteligente para la detección de suplantación en códigos QR
+mediante análisis en cascada con trazabilidad de redirecciones aplicable
+a diversos entornos</p></td>
 <td></td>
 </tr>
 <tr>
@@ -123,30 +123,34 @@ víctimas de un ataque de quishing.</p></td>
 <td colspan="2" style="text-align: center;"><p><strong>OBJETIVOS DE LA
 INVESTIGACIÓN.</strong></p>
 <p><strong>Objetivo General</strong></p>
-<p>Desarrollar una solución multiplataforma para la identificación de
-códigos QR y la detección temprana de amenazas asociadas a ataques de
-quishing, dirigida a los estudiantes de la Facultad de Ciencias
-Matemáticas y Físicas de la Universidad de Guayaquil.</p>
+<p>Desarrollar un sistema inteligente para la detección de suplantación
+en códigos QR mediante un análisis en cascada con trazabilidad de
+redirecciones, aplicable a diversos entornos de uso.</p>
 <p><strong>Objetivos Específicos</strong></p>
 <ol type="1">
 <li><p>Analizar las técnicas actuales de detección de códigos QR
 maliciosos y los principales vectores de ataque de quishing, mediante
-una revisión de literatura científica y técnica, para establecer los
-criterios de clasificación que usará el sistema.</p></li>
+una revisión de literatura científica y técnica, para establecer y
+justificar comparativamente los criterios y algoritmos de clasificación
+que empleará cada capa del sistema.</p></li>
 <li><p>Diseñar la arquitectura del sistema y el motor de detección de
-URLs maliciosas, integrando servicios externos de inteligencia de
-amenazas con heurísticas propias, y definiendo las interfaces de la
-extensión para Chromium y la aplicación móvil desarrollada en
+URLs maliciosas, incorporando un módulo de trazabilidad que resuelva la
+cadena de redirecciones hasta el destino final antes de la verificación,
+e integrando heurísticas propias y validación de dominios con servicios
+externos de inteligencia de amenazas, además de definir las interfaces de
+la extensión para Chromium y la aplicación móvil desarrollada en
 Flutter.</p></li>
 <li><p>Implementar la extensión para navegadores basados en Chromium y
 la aplicación móvil Android, desarrollando el motor de detección
-compartido y los módulos de escaneo, análisis y alerta al usuario en
-tiempo real.</p></li>
+compartido, el módulo de trazabilidad de redirecciones y los módulos de
+escaneo, análisis y alerta al usuario en tiempo real, con la
+instrumentación necesaria para registrar métricas por capa.</p></li>
 <li><p>Validar técnicamente el funcionamiento del sistema mediante
-pruebas con un conjunto representativo de códigos QR maliciosos y
-legítimos en escenarios de uso de los estudiantes de la Facultad de
-Ciencias Matemáticas y Físicas de la Universidad de Guayaquil, evaluando
-métricas de precisión, exhaustividad y tiempo de respuesta.</p></li>
+pruebas sobre un conjunto etiquetado y representativo de códigos QR y
+URLs maliciosas y legítimas, evaluando precisión, exhaustividad y tiempo
+de respuesta desglosados por capa, así como la variación de la tasa de
+detección con y sin el módulo de trazabilidad de redirecciones
+activado.</p></li>
 </ol></td>
 <td></td>
 </tr>
@@ -163,8 +167,8 @@ PROYECTO</strong></p>
 <li><p>Desarrollo de una extensión para navegadores basados en Chromium
 (Chrome, Edge, Brave, Opera) que analiza códigos QR presentes en páginas
 web</p></li>
-<li><p>Desarrollo de una aplicación móvil multiplataforma en Flutter
-(con soporte mínimo Android 10 / API 29) que permite escanear códigos QR
+<li><p>Desarrollo de una aplicación móvil Android en Flutter, framework
+multiplataforma (con soporte mínimo Android 10 / API 29), que permite escanear códigos QR
 físicos con la cámara del dispositivo y analizarlos antes de abrir su
 contenido</p></li>
 <li><p>Construcción de un motor de detección de URLs maliciosas
@@ -211,7 +215,7 @@ académico Capacitación formal a usuarios finales</p></li>
 <td colspan="2" style="text-align: center;"><p><strong>JUSTIFICACIÓN E
 IMPORTANCIA</strong></p>
 <p><strong>Justificación Técnica</strong></p>
-<p>El desarrollo de esta solución tecnológica, denominada QR Shield y
+<p>El desarrollo de esta solución tecnológica, denominada Umbral y
 desarrollada por el equipo NovaTools, responde al crecimiento acelerado
 del quishing como vector de ataque en Ecuador, reconocido oficialmente
 por el Ministerio de Telecomunicaciones, y a la ausencia de herramientas

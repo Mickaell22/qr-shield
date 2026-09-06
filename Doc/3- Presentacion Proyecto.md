@@ -1,4 +1,4 @@
-# Implementación de una solución multiplataforma para la identificación de códigos QR y detección temprana de amenazas asociadas a ataques de quishing
+# Sistema inteligente para la detección de suplantación en códigos QR mediante análisis en cascada con trazabilidad de redirecciones aplicable a diversos entornos
 
 **Universidad de Guayaquil — Facultad de Ciencias Matemáticas y Físicas**
 **Carrera de Software**
@@ -56,7 +56,7 @@ El **Quishing** los suplanta o adultera para redirigir a **sitios fraudulentos**
 
 ### Tema
 
-Implementación de **una solución multiplataforma** para la identificación de **códigos QR** y **detección temprana** de amenazas asociadas a **ataques de quishing**.
+**Sistema inteligente** para la **detección de suplantación** en **códigos QR** mediante **análisis en cascada** con **trazabilidad de redirecciones**, aplicable a diversos entornos.
 
 ### Tipo de Proyecto
 
@@ -77,14 +77,14 @@ Implementación de **una solución multiplataforma** para la identificación de 
 
 ### Objetivo General
 
-Desarrollar una **solución multiplataforma** para la identificación de **códigos QR** y la **detección temprana** de amenazas asociadas a ataques de **quishing**, dirigida a los **estudiantes de la Facultad de Ciencias Matemáticas y Físicas de la Universidad de Guayaquil**.
+Desarrollar un **sistema inteligente** para la **detección de suplantación** en **códigos QR** mediante un **análisis en cascada** con **trazabilidad de redirecciones**, **aplicable a diversos entornos** de uso.
 
 ### Objetivos Específicos
 
 - **Analizar** técnicas actuales de detección de QR maliciosos y vectores de ataque de quishing.
 - **Diseñar** la arquitectura del sistema y el motor de detección de URL maliciosas.
 - **Implementar** la extensión Chromium, la app Android y el motor de detección compartido.
-- **Validar** técnicamente el sistema en escenarios de uso de los **estudiantes de la FCMF** con métricas de **precisión, exhaustividad y tiempo de respuesta**.
+- **Validar** técnicamente el sistema sobre un **conjunto etiquetado** de URLs maliciosas y legítimas, con métricas de **precisión, exhaustividad y tiempo de respuesta por capa**, y comparando la tasa de detección **con y sin trazabilidad**.
 
 ---
 
@@ -93,7 +93,7 @@ Desarrollar una **solución multiplataforma** para la identificación de **códi
 ### Qué Incluye
 
 - Extensión para navegadores **Chromium** (Chrome, Edge, Brave)
-- App móvil multiplataforma en **Flutter** (mínimo Android 10 / API 29) con escaneo de cámara y galería
+- App móvil Android en **Flutter**, framework multiplataforma (mínimo Android 10 / API 29), con escaneo de cámara y galería
 - Motor de detección **multicapa (L1-L5) en cascada** con APIs de inteligencia de amenazas y heurísticas propias
 - Alertas en **tiempo real** (semáforo verde/amarillo/rojo)
 
@@ -111,9 +111,9 @@ Desarrollar una **solución multiplataforma** para la identificación de **códi
 
 **Amenaza creciente y reconocida:** El quishing **creció x5 en 2025** y el Mintel ya lo declaró como riesgo nacional.
 
-**Población con alta exposición:** Los **estudiantes de la FCMF** presentan **exposición diaria** a QR en el **campus**, en un entorno donde suplantar un código impreso es trivial.
+**Población de estudio con alta exposición:** Los **estudiantes de la FCMF** presentan **exposición diaria** a QR en el **campus**, lo que los hace una fuente representativa para el **levantamiento de información** y las **pruebas de usabilidad**. Participan como población de estudio, no como beneficiarios del sistema.
 
-**Aporte técnico verificable:** Se desarrolla **QR Shield**, una herramienta que analiza URLs extraídas de códigos QR mediante un **motor de detección multicapa** que combina heurísticas propias con fuentes de inteligencia de amenazas (**Google Safe Browsing, VirusTotal, URLhaus**) y emite una alerta antes de que el usuario acceda al sitio.
+**Aporte técnico verificable:** Se desarrolla **Umbral**, una herramienta que **resuelve la cadena de redirecciones** de la URL extraída del código QR hasta su **destino real** y lo analiza mediante un **motor de detección multicapa** que combina heurísticas propias y validación de dominios con fuentes de inteligencia de amenazas (**Google Safe Browsing, VirusTotal, URLhaus**), emitiendo una alerta antes de que el usuario acceda al sitio. La trazabilidad es el **elemento diferenciador**: sin ella, un acortador oculta el destino y las heurísticas no ven nada anómalo.
 
 ---
 
@@ -193,7 +193,7 @@ Desarrollar una **solución multiplataforma** para la identificación de **códi
 
 ### Entorno de validación
 
-- **Facultad de Ciencias Matemáticas y Físicas, Universidad de Guayaquil** — entorno donde se validará el sistema con la población objetivo.
+- **Facultad de Ciencias Matemáticas y Físicas, Universidad de Guayaquil** — entorno donde se realizará el levantamiento de información y las pruebas de usabilidad con la población de estudio.
 - Ejemplo visual del ataque de quishing que el sistema prevendrá: sustitución de QR físico impreso en espacios públicos del campus.
 
 ### Recursos adicionales
