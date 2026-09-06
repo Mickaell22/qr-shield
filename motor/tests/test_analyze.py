@@ -84,3 +84,30 @@ def test_cadena_no_resuelta_se_reporta_en_las_razones(monkeypatch):
     body = client.post("/v1/analyze", json={"url": "https://a.example/"}).json()
     assert body["redirects"]["resolved"] is False
     assert any("no resuelta" in r for r in body["reasons"])
+
+
+def test_la_respuesta_trae_el_desglose_por_capa():
+    body = client.post("/v1/analyze", json={"url": "https://example.com"}).json()
+    metrics = body["metrics"]
+    assert [c["layer"] for c in metrics["layers"]] == ["redirects", "L1"]
+    assert metrics["total_ms"] >= 0
+    # Nadie sumo puntos: el verde lo emite la ultima capa de la cascada.
+    assert metrics["deciding_layer"] == "L1"
+
+
+def test_las_metricas_atribuyen_el_veredicto_a_la_capa_que_sumo():
+    url = "http://192.168.1.10/" + "x" * 120
+    body = client.post("/v1/analyze", json={"url": url}).json()
+    metrics = body["metrics"]
+    l1 = next(c for c in metrics["layers"] if c["layer"] == "L1")
+    assert metrics["deciding_layer"] == "L1"
+    assert l1["score"] == 70
+    assert l1["hits"] == 2
+
+
+def test_las_metricas_registran_los_saltos_de_la_trazabilidad(monkeypatch):
+    cadena = ["https://a.example/", "https://b.example/", "https://c.example/"]
+    monkeypatch.setattr(analyze_module, "resolve_chain", _traza(cadena))
+    body = client.post("/v1/analyze", json={"url": cadena[0]}).json()
+    redirects = next(c for c in body["metrics"]["layers"] if c["layer"] == "redirects")
+    assert redirects["hits"] == 2
