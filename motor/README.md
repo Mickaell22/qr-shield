@@ -196,8 +196,8 @@ pytest
 ```
 
 ## Roadmap de versiones
-- `v0.1.0` (actual): scaffold + heuristicas L1 + scoring ponderado +
-  trazabilidad de redirecciones
+- `v0.1.0`: scaffold + heuristicas L1 + scoring ponderado
+- `v0.1.1` (actual): trazabilidad de redirecciones + metricas por capa
 - `v0.2.0`: cache L2 (PostgreSQL)
 - `v0.3.0`: L3 (feed local de URLhaus)
 - `v0.4.0`: L4 (Google Safe Browsing)
