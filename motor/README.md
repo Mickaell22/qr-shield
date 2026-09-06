@@ -148,7 +148,7 @@ URL larga 30, acortador 25.
 
 El corte en 60 exige **dos senales acumuladas** para llegar a rojo: la heuristica
 L1 mas fuerte (punycode, 50) no basta por si sola, porque un dominio IDN legitimo
-la dispara igual. Cuando entren las capas L2-L5 sus resultados se suman al mismo
+la dispara igual. Cuando entren las capas L3-L5 sus resultados se suman al mismo
 score, sin cambiar los umbrales.
 
 ## Metricas por capa (RF-008)
