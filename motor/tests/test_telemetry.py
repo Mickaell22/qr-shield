@@ -49,10 +49,21 @@ def test_la_capa_responsable_es_la_ultima_que_aporto_puntos():
     assert metrics.deciding_layer == "L1"
 
 
-def test_sin_puntos_responde_la_ultima_capa_que_corrio():
-    # Veredicto verde: la cascada se agoto sin que nadie sumara.
-    metrics = _metricas(("redirects", 0, None), ("L1", 0, None))
-    assert metrics.deciding_layer == "L1"
+def test_sin_puntos_el_veredicto_es_de_la_cascada_no_de_una_capa():
+    # Verde: la cascada se agoto sin que nadie sumara ni cortara. Atribuirlo a
+    # la ultima capa contaria como resuelta ahi una consulta que no resolvio.
+    metrics = _metricas(("redirects", 0, None), ("L1", 0, None), ("L2", 0, None))
+    assert metrics.deciding_layer == "cascade"
+
+
+def test_la_capa_que_corta_la_cascada_manda_sobre_las_que_sumaron():
+    metrics = AnalysisMetrics()
+    with metrics.measure("L1") as medicion:
+        medicion.score = 30
+    with metrics.measure("L2") as medicion:
+        medicion.short_circuited = True
+    # Un hit de cache resuelve el analisis aunque no sume puntos propios.
+    assert metrics.deciding_layer == "L2"
 
 
 def test_sin_capas_no_hay_responsable():

@@ -34,6 +34,10 @@ class LayerMetric:
     `score` es lo que la capa aporto al total (sin el tope de 100, que se aplica
     al sumar), `hits` cuantas senales disparo y `service` nombra el servicio
     externo consultado: queda en None en las capas locales.
+
+    `short_circuited` marca la capa que corto la cascada: es el dato con el que
+    el reporte de validacion mide cuantas detecciones se resolvieron localmente
+    (L1-L3) frente a las que llegaron a consultar un servicio externo (L4-L5).
     """
 
     layer: str
@@ -41,6 +45,7 @@ class LayerMetric:
     score: int = 0
     hits: int = 0
     service: str | None = None
+    short_circuited: bool = False
 
 
 def _anonymize(url: str) -> str:
@@ -79,15 +84,25 @@ class AnalysisMetrics:
 
     @property
     def deciding_layer(self) -> str:
-        """Capa responsable del veredicto: la ultima que aporto puntos.
+        """Capa responsable del veredicto.
 
-        Si ninguna aporto, el verde lo emite la cascada completa al agotarse, y
-        la responsable es la ultima capa que llego a correr.
+        Manda la capa que corto la cascada: si un hit de cache resuelve el
+        analisis, la responsable es esa aunque no haya sumado puntos propios.
+        Sin cortocircuito, responde la ultima capa que aporto puntos.
+
+        Si nadie corto ni sumo, el veredicto (un verde) no lo emitio ninguna
+        capa sino la cascada al agotarse: `cascade`. Atribuirselo a la ultima
+        que corrio contaria como resuelta en L2 una consulta que fue un miss, y
+        falsearia la proporcion de detecciones por capa del reporte. `none` es
+        el caso distinto de que no haya corrido ninguna capa.
         """
+        for metrica in self.layers:
+            if metrica.short_circuited:
+                return metrica.layer
         con_puntos = [m.layer for m in self.layers if m.score > 0]
         if con_puntos:
             return con_puntos[-1]
-        return self.layers[-1].layer if self.layers else "none"
+        return "cascade" if self.layers else "none"
 
     @property
     def services(self) -> list[str]:

@@ -43,3 +43,18 @@ REDIRECT_TOTAL_TIMEOUT_SECONDS = float(os.getenv("REDIRECT_TOTAL_TIMEOUT_SECONDS
 # benchmark, donde hace falta la URL para cruzar cada analisis con la etiqueta
 # del dataset.
 METRICS_LOG_URLS = _flag("METRICS_LOG_URLS", "false")
+
+# --- Cache de veredictos (L2) ---
+
+# Cadena de conexion a PostgreSQL. Vacia = capa L2 desactivada: el motor arranca
+# y analiza igual, solo sin cache. No lleva default con host ni credenciales.
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+
+# Vigencia de un veredicto no concluyente (verde o amarillo). 6 horas: un
+# dominio limpio hoy puede quedar comprometido, asi que no se sirve indefinido.
+CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL_SECONDS", str(6 * 3600)))
+
+# Vigencia de un veredicto rojo. 24 horas: un dominio malicioso rara vez deja
+# de serlo dentro del dia, y servir de mas un rojo es mucho menos grave que
+# servir de mas un verde.
+CACHE_TTL_MALICIOUS_SECONDS = int(os.getenv("CACHE_TTL_MALICIOUS_SECONDS", str(24 * 3600)))
