@@ -36,7 +36,8 @@ curl -X POST http://localhost:8000/v1/analyze \
 # {"verdict":"green","score":0,"reasons":[],"final_url":"https://example.com/",
 #  "redirects":{"chain":["https://example.com/"],"hops":0,"resolved":true,
 #               "rewrote_url":false,"reason":""}}
-# Los ejemplos siguientes omiten "final_url" y "redirects" por brevedad.
+#  "metrics":{"total_ms":1.4,"deciding_layer":"L1","layers":[...]}}
+# Los ejemplos siguientes omiten "final_url", "redirects" y "metrics" por brevedad.
 ```
 
 Ejemplo de request — URL larga sospechosa (veredicto amarillo, heuristica L1):
@@ -149,6 +150,44 @@ El corte en 60 exige **dos senales acumuladas** para llegar a rojo: la heuristic
 L1 mas fuerte (punycode, 50) no basta por si sola, porque un dominio IDN legitimo
 la dispara igual. Cuando entren las capas L2-L5 sus resultados se suman al mismo
 score, sin cambiar los umbrales.
+
+## Metricas por capa (RF-008)
+
+Cada analisis se instrumenta capa por capa. Es el insumo del **objetivo
+especifico 4**: sin esto no se pueden calcular precision, exhaustividad ni
+tiempos desglosados, ni comparar la deteccion con y sin trazabilidad.
+
+La respuesta trae el desglose en `metrics`:
+
+| Campo | Significado |
+|---|---|
+| `metrics.total_ms` | Tiempo total del analisis |
+| `metrics.deciding_layer` | Capa responsable del veredicto: la ultima que aporto puntos; si ninguna aporto (verde), la ultima que corrio |
+| `metrics.layers[].layer` | Identificador de la capa (`redirects`, `L1`, ...) |
+| `metrics.layers[].duration_ms` | Tiempo de esa capa |
+| `metrics.layers[].score` | Puntos que aporto al total |
+| `metrics.layers[].hits` | Senales que disparo (en `redirects`, los saltos resueltos) |
+| `metrics.layers[].service` | Servicio externo consultado; `null` en las capas locales |
+
+Ademas, cada analisis se escribe como una linea JSON en el logger
+`motor.metrics`, con el timestamp, el veredicto, la capa responsable, los
+servicios consultados, los tiempos, los datos de la trazabilidad y el estado del
+interruptor `tracing_enabled` (lo que separa la corrida A de la B del benchmark):
+
+```json
+{"timestamp": "2026-09-06T22:55:11+00:00", "url": "sha256:fadd71a0eb835709",
+ "verdict": "red", "score": 70, "deciding_layer": "L1", "services": [],
+ "total_ms": 0.251,
+ "layers": [{"layer": "redirects", "duration_ms": 0.013, "score": 0, "hits": 0, "service": null},
+            {"layer": "L1", "duration_ms": 0.143, "score": 70, "hits": 2, "service": null}],
+ "redirects": {"hops": 0, "rewrote_url": false, "resolved": true},
+ "tracing_enabled": false}
+```
+
+**La URL se registra anonimizada** (hash truncado): el requisito pide registro
+anonimo y la URL que escaneo un usuario no tiene por que quedar en el log. Para
+el benchmark, donde hace falta cruzar cada analisis con la etiqueta del dataset,
+se activa con `METRICS_LOG_URLS=true`.
 
 ## Tests
 

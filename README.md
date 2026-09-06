@@ -101,15 +101,18 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 - **Scoring ponderado** — cada heuristica aporta su peso, el motor los suma (tope 100)
   y traduce el total en el semaforo: `0` verde, `1-59` amarillo, `60+` rojo.
 - **Semaforo de veredicto** verde / amarillo / rojo, calculado sin depender de servicios externos.
-- **Tests automatizados** con pytest sobre las heuristicas y el endpoint.
+- **Metricas por capa (RF-008)** — tiempo por capa y total, capa responsable del
+  veredicto, saltos de la trazabilidad y estado del interruptor A/B, en la respuesta
+  y como registro JSON anonimizado.
+- **Tests automatizados** con pytest sobre las heuristicas, el endpoint y las metricas.
 
 ### Planificado
 
 - **Cascada L2 a L5** que minimiza llamadas a APIs externas y respeta cuotas free tier.
 - **Validacion de dominios** contra listados de dominios legitimos, y antiguedad del
   dominio via WHOIS como senal adicional.
-- **Metricas por capa** — en que capa corto la cascada, tiempo por capa y comparacion
-  de la tasa de deteccion con y sin la trazabilidad activada.
+- **Panel de metricas** que agregue los registros por capa y calcule precision,
+  exhaustividad y la proporcion de detecciones locales (L1-L3) frente a externas (L4-L5).
 - **Cache persistente** de veredictos en PostgreSQL para evitar re-analisis.
 - **Escaneo nativo de QR** en Android con ML Kit de Google.
 - **Interceptacion en navegador** de codigos QR embebidos en paginas.
