@@ -8,8 +8,9 @@
 </p>
 
 <p>
-  <em>Hoy funciona el motor con la capa L1 (heuristicas locales) cubierta por tests.<br/>
-  Las capas L2 a L5 y los dos clientes estan en el <a href="#roadmap">roadmap</a>.</em>
+  <em>Hoy funciona el motor con la trazabilidad de redirecciones, la capa L1
+  (heuristicas locales) y la cache L2, cubiertas por tests.<br/>
+  Las capas L3 a L5 y los dos clientes estan en el <a href="#roadmap">roadmap</a>.</em>
 </p>
 
 <p>
@@ -111,7 +112,7 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 
 ### Planificado
 
-- **Cascada L2 a L5** que minimiza llamadas a APIs externas y respeta cuotas free tier.
+- **Capas L3 a L5** que minimizan llamadas a APIs externas y respetan cuotas free tier.
 - **Validacion de dominios** contra listados de dominios legitimos, y antiguedad del
   dominio via WHOIS como senal adicional.
 - **Panel de metricas** que agregue los registros por capa y calcule precision,
