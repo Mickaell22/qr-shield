@@ -148,8 +148,8 @@ URL larga 30, acortador 25.
 
 El corte en 60 exige **dos senales acumuladas** para llegar a rojo: la heuristica
 L1 mas fuerte (punycode, 50) no basta por si sola, porque un dominio IDN legitimo
-la dispara igual. Cuando entren las capas L3-L5 sus resultados se suman al mismo
-score, sin cambiar los umbrales.
+la dispara igual. Las capas siguientes suman sus resultados al mismo score, sin
+cambiar los umbrales: una URL listada en URLhaus (L3) aporta 100 y basta para el rojo.
 
 ## Metricas por capa (RF-008)
 
@@ -220,6 +220,31 @@ en deteccion cuesta mas caro que servir de mas un rojo.
 
 La columna `source_layer` guarda que capa emitio el veredicto: `cascade`
 significa que ninguna capa lo emitio, la cascada se agoto sin senales.
+
+## Feed local de URLhaus (L3)
+
+Tercera capa: compara las URLs de la cadena de redirecciones contra el volcado
+CSV de URLs maliciosas activas de abuse.ch. El feed se descarga en segundo plano
+al arrancar y cada 12 h, y se consulta en memoria: la capa no hace red por
+analisis (~0.2 ms medidos).
+
+Se configura con `URLHAUS_FEED_URL` (valor de referencia en `.env.example`).
+**Sin esa variable la capa queda desactivada**, y mientras el feed no termine de
+descargarse la capa no corre ni figura en las metricas. Una descarga fallida, o
+una respuesta sin URLs, conserva el ultimo feed bueno.
+
+| Comportamiento | Detalle |
+|---|---|
+| Que revisa | La cadena completa: tambien detecta un salto intermedio listado |
+| Comparacion | URL exacta normalizada (esquema y host en minusculas, barra final, sin fragmento). No por host: URLhaus lista URLs de servicios de alojamiento compartido |
+| Peso | 100 puntos y cortocircuito: una URL confirmada basta para el rojo |
+| Recarga | `URLHAUS_REFRESH_SECONDS`, por defecto 12 h |
+| Reintento tras fallo | `URLHAUS_RETRY_SECONDS`, por defecto 5 min (minimo que pide abuse.ch) |
+| Timeout de descarga | `URLHAUS_TIMEOUT_SECONDS`, por defecto 30 s (fuera del SLA) |
+| Clave | `URLHAUS_AUTH_KEY`, opcional; si existe se envia en `Auth-Key` |
+
+Como L2 va antes que L3, un verde cacheado se sigue sirviendo aunque la URL entre
+al feed despues, hasta que vence su TTL de 6 h.
 
 ## Tests
 

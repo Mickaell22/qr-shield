@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, HttpUrl
 
-from app import cache
+from app import cache, urlhaus
 from app.config import REDIRECT_TRACING_ENABLED
 from app.detectors.l1_heuristics import run_l1
 from app.redirects import RedirectTrace, resolve_chain
@@ -74,13 +74,6 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         medicion.hits = len(hits)
         medicion.score = sum(h.score for h in hits)
 
-    # Se resuelve el veredicto en vivo antes de tocar la cache: la capa
-    # responsable se lee ahora, cuando solo corrieron las capas que evaluan. Si
-    # se leyera despues, la propia L2 figuraria como origen del veredicto que
-    # ella misma va a guardar.
-    score_vivo, verdict_vivo = evaluate(hits)
-    capa_responsable = metrics.deciding_layer
-
     # La capa solo se mide si existe en esta configuracion: registrar una L2
     # desactivada la haria figurar como responsable de todo veredicto verde,
     # y falsearia la proporcion de detecciones por capa del reporte.
@@ -95,7 +88,18 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         origen = "veredicto servido desde la cache L2 (analisis previo)"
         reasons = [*cached.reasons, origen]
     else:
-        score, verdict = score_vivo, verdict_vivo
+        # L3 revisa la cadena completa, no solo el destino. Igual que L2, solo
+        # se mide si hay un feed cargado.
+        if urlhaus.ready():
+            with metrics.measure("L3") as medicion:
+                listada = urlhaus.lookup(trace.chain)
+                if listada is not None:
+                    hits.append(listada)
+                    medicion.hits = 1
+                    medicion.score = listada.score
+                    medicion.short_circuited = True
+
+        score, verdict = evaluate(hits)
         reasons = [h.reason for h in hits]
         # Una cadena sin resolver deja el analisis sobre una URL intermedia: ese
         # veredicto es parcial y no se cachea, o se serviria como definitivo.
@@ -105,7 +109,10 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 verdict=verdict,
                 score=score,
                 reasons=reasons,
-                source_layer=capa_responsable,
+                # Leerla aca no le atribuye a L2 el veredicto que va a guardar:
+                # en esta rama L2 fue un miss, sin cortocircuito ni puntos, asi
+                # que la regla de deciding_layer no puede elegirla.
+                source_layer=metrics.deciding_layer,
             )
 
     if not trace.resolved:
