@@ -1,6 +1,6 @@
 [project]
 name = "umbral-motor"
-version = "0.2.0"
+version = "0.3.0"
 description = "Motor de deteccion de suplantacion en codigos QR - API REST (NovaTools)"
 requires-python = ">=3.11"
 dependencies = [
