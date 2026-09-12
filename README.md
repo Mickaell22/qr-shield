@@ -9,8 +9,8 @@
 
 <p>
   <em>Hoy funciona el motor con la trazabilidad de redirecciones, la capa L1
-  (heuristicas locales) y la cache L2, cubiertas por tests.<br/>
-  Las capas L3 a L5 y los dos clientes estan en el <a href="#roadmap">roadmap</a>.</em>
+  (heuristicas locales), la cache L2 y el feed local de URLhaus (L3), cubiertas por tests.<br/>
+  Las capas L4 y L5 y los dos clientes estan en el <a href="#roadmap">roadmap</a>.</em>
 </p>
 
 <p>
@@ -105,6 +105,10 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 - **Cache de veredictos (L2)** en PostgreSQL con TTL asimetrico (mas corto para los
   veredictos limpios), que evita re-analizar y consumir cuota externa. Es opcional:
   sin base configurada, o con la base caida, el motor analiza igual.
+- **Feed local de URLhaus (L3)** — el volcado de URLs maliciosas activas de abuse.ch se
+  descarga en segundo plano cada 12 h y se consulta en memoria, sin red por analisis.
+  Revisa la cadena de redirecciones completa, asi que tambien detecta un salto
+  intermedio listado. Una URL listada basta para el rojo.
 - **Metricas por capa (RF-008)** — tiempo por capa y total, capa responsable del
   veredicto, saltos de la trazabilidad y estado del interruptor A/B, en la respuesta
   y como registro JSON anonimizado.
@@ -112,7 +116,7 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 
 ### Planificado
 
-- **Capas L3 a L5** que minimizan llamadas a APIs externas y respetan cuotas free tier.
+- **Capas L4 y L5** que minimizan llamadas a APIs externas y respetan cuotas free tier.
 - **Validacion de dominios** contra listados de dominios legitimos, y antiguedad del
   dominio via WHOIS como senal adicional.
 - **Panel de metricas** que agregue los registros por capa y calcule precision,
@@ -148,11 +152,11 @@ flowchart LR
     API -->|verde / amarillo / rojo| E
 
     classDef pendiente stroke-dasharray: 5 5,opacity:0.6
-    class A,E,L3,L4,L5 pendiente
+    class A,E,L4,L5 pendiente
 ```
 
 > Los nodos con borde punteado son los planificados. Hoy el flujo real es
-> `POST /v1/analyze` → **trazabilidad** → **L1** → **L2** → veredicto.
+> `POST /v1/analyze` → **trazabilidad** → **L1** → **L2** → **L3** → veredicto.
 
 > **Por que motor centralizado y no SDK embebido:**
 > las API keys de Google Safe Browsing y VirusTotal **no pueden vivir en el cliente**,
@@ -174,7 +178,7 @@ real, y sobre esa URL terminal corren las heuristicas y la validacion de dominio
 | **L1** | Heuristicas locales | **Implementada** | Instantanea | Gratis | Shorteners, IP literales, TLDs sospechosos, URLs >100 chars, punycode |
 | **L1** | Validacion de dominios | Planificada | Instantanea | Gratis | Dominio destino contra listados legitimos + antiguedad del registro |
 | **L2** | Cache PostgreSQL | **Implementada** | ~2 ms medidos | Gratis | Veredictos previos con TTL configurable (6 h; 24 h si es rojo) |
-| **L3** | URLhaus (abuse.ch) | Planificada | <100 ms | Gratis | Feed CSV de URLs maliciosas en vivo (refresh cada 12h) |
+| **L3** | URLhaus (abuse.ch) | **Implementada** | <1 ms (busqueda en memoria) | Gratis | URLs maliciosas activas del feed CSV, en toda la cadena de redirecciones (refresh cada 12h) |
 | **L4** | Google Safe Browsing | Planificada | ~300 ms | 10k req/dia free | Malware, phishing, software no deseado |
 | **L5** | VirusTotal | Planificada | ~800 ms | 4 req/min free | Veredicto consolidado de 70+ motores antivirus |
 

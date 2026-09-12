@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app import cache
+from app import cache, urlhaus
 from app.api.v1 import analyze as analyze_module
 from app.main import app
 from app.redirects import RedirectTrace
@@ -172,3 +172,22 @@ def test_con_la_cache_apagada_no_aparece_la_capa_l2(monkeypatch):
     body = client.post("/v1/analyze", json={"url": "https://example.com"}).json()
     assert [c["layer"] for c in body["metrics"]["layers"]] == ["redirects", "L1"]
     assert body["metrics"]["deciding_layer"] == "cascade"
+
+
+def test_una_url_listada_en_urlhaus_es_roja_y_la_decide_l3(monkeypatch):
+    monkeypatch.setattr(cache, "DATABASE_URL", "")
+    monkeypatch.setattr(urlhaus, "_urls", frozenset({"https://example.com/descarga"}))
+    response = client.post("/v1/analyze", json={"url": "https://example.com/descarga"})
+    body = response.json()
+    assert body["verdict"] == "red"
+    assert body["score"] == 100
+    assert body["metrics"]["deciding_layer"] == "L3"
+    l3 = next(c for c in body["metrics"]["layers"] if c["layer"] == "L3")
+    assert l3["short_circuited"]
+
+
+def test_sin_feed_cargado_l3_no_figura_en_las_metricas(monkeypatch):
+    monkeypatch.setattr(cache, "DATABASE_URL", "")
+    monkeypatch.setattr(urlhaus, "_urls", None)
+    body = client.post("/v1/analyze", json={"url": "https://example.com"}).json()
+    assert "L3" not in [c["layer"] for c in body["metrics"]["layers"]]

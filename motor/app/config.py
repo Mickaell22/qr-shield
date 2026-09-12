@@ -58,3 +58,26 @@ CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL_SECONDS", str(6 * 3600)))
 # de serlo dentro del dia, y servir de mas un rojo es mucho menos grave que
 # servir de mas un verde.
 CACHE_TTL_MALICIOUS_SECONDS = int(os.getenv("CACHE_TTL_MALICIOUS_SECONDS", str(24 * 3600)))
+
+# --- Feed local de URLhaus (L3) ---
+
+# URL del volcado CSV de abuse.ch. Vacia = capa L3 desactivada: el motor analiza
+# igual sin ella. No lleva default con host, igual que DATABASE_URL.
+URLHAUS_FEED_URL = os.getenv("URLHAUS_FEED_URL", "")
+
+# Clave de abuse.ch. Opcional: los volcados CSV hoy son libres, pero si se
+# define se envia en la cabecera Auth-Key.
+URLHAUS_AUTH_KEY = os.getenv("URLHAUS_AUTH_KEY", "")
+
+# Cada cuanto se recarga el feed. 12 horas: abuse.ch pide no descargar el
+# volcado mas de una vez cada 5 minutos, y el alcance fija el refresco en 12h.
+URLHAUS_REFRESH_SECONDS = int(os.getenv("URLHAUS_REFRESH_SECONDS", str(12 * 3600)))
+
+# Reintento tras una descarga fallida. Mas corto que el refresco para que un
+# fallo al arrancar no deje la capa apagada 12 horas; no menos de 5 minutos por
+# la politica de uso de abuse.ch.
+URLHAUS_RETRY_SECONDS = int(os.getenv("URLHAUS_RETRY_SECONDS", "300"))
+
+# Timeout de la descarga. Corre en segundo plano, fuera del SLA del analisis, y
+# el volcado pesa algunos MB: no se alinea con los 1.5s por capa.
+URLHAUS_TIMEOUT_SECONDS = float(os.getenv("URLHAUS_TIMEOUT_SECONDS", "30"))
