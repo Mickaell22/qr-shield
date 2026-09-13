@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app import cache, urlhaus
+from app import cache, telemetry, urlhaus
 from app.api.v1 import analyze as analyze_module
 from app.main import app
 from app.redirects import RedirectTrace
@@ -117,13 +117,15 @@ def test_las_metricas_registran_los_saltos_de_la_trazabilidad(monkeypatch):
 @pytest.fixture
 def cache_activa(monkeypatch):
     """Cache L2 encendida con un doble en memoria: devuelve lo que se le ponga
-    en `guardado` y anota lo que el motor intenta escribir en `escrito`."""
-    estado = {"guardado": None, "escrito": []}
+    en `guardado` y anota lo que el motor intenta escribir en `escrito`. Los
+    registros de metricas, que van a la misma base, quedan en `metricas`."""
+    estado = {"guardado": None, "escrito": [], "metricas": []}
     monkeypatch.setattr(cache, "enabled", lambda: True)
     monkeypatch.setattr(cache, "lookup", lambda url: estado["guardado"])
     monkeypatch.setattr(
         cache, "store", lambda url, **kwargs: estado["escrito"].append((url, kwargs)) or True
     )
+    monkeypatch.setattr(telemetry, "persist", lambda r: estado["metricas"].append(r) or True)
     return estado
 
 
@@ -191,3 +193,12 @@ def test_sin_feed_cargado_l3_no_figura_en_las_metricas(monkeypatch):
     monkeypatch.setattr(urlhaus, "_urls", None)
     body = client.post("/v1/analyze", json={"url": "https://example.com"}).json()
     assert "L3" not in [c["layer"] for c in body["metrics"]["layers"]]
+
+
+def test_cada_analisis_persiste_su_registro_de_metricas(cache_activa):
+    body = client.post("/v1/analyze", json={"url": "https://example.com"}).json()
+
+    (registro,) = cache_activa["metricas"]
+    assert registro["verdict"] == body["verdict"]
+    assert registro["deciding_layer"] == body["metrics"]["deciding_layer"]
+    assert registro["url"].startswith("sha256:")

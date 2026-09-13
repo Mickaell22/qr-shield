@@ -1,6 +1,7 @@
 import ipaddress
+from collections.abc import Sequence
 from dataclasses import dataclass
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 URL_LENGTH_THRESHOLD = 100
 URL_LENGTH_SCORE = 30
@@ -31,6 +32,13 @@ SHORTENER_DOMAINS = frozenset(
         "t.ly",
         "tiny.cc",
         "shorte.st",
+        # Redirectores de QR dinamicos (QR Code Generator): el QR impreso apunta
+        # aca y el destino se cambia despues sin reimprimir. Esconden el destino
+        # igual que un acortador. Son 74 de las 500 URLs maliciosas del
+        # benchmark de 2026-09-13.
+        "qrco.de",
+        "q-r.to",
+        "l.ead.me",
     }
 )
 
@@ -146,11 +154,37 @@ def check_punycode(url: str) -> HeuristicResult:
     )
 
 
-def run_l1(url: str) -> list[HeuristicResult]:
+def _without_query(url: str) -> str:
+    return urlunparse(urlparse(url)._replace(query="", fragment=""))
+
+
+def run_l1(url: str, chain: Sequence[str] = ()) -> list[HeuristicResult]:
+    """Corre las heuristicas sobre el destino terminal `url`.
+
+    `chain` es la cadena de redirecciones completa (con `url` al final). Los
+    checks siguen siendo funciones puras de una URL; lo que decide la cadena es
+    a que URL se aplica cada uno, por dos senales que el destino solo pierde:
+
+    - **Acortador**: se revisa cada salto. Tras resolver `bit.ly/x` el destino ya
+      no es un acortador, y sin esto la trazabilidad borraba la senal de que el
+      QR escondia su destino (8 maliciosas del benchmark se detectaban solo sin
+      trazabilidad).
+    - **Longitud**: la URL del QR se mide completa, pero un destino alcanzado por
+      redireccion se mide sin query. La query de un salto la genera el servidor
+      (tokens de SSO, `state`, `continue=`), no quien imprimio el QR: medida
+      entera, cualquier portada que redirige a un login disparaba la heuristica
+      (4 falsos positivos del benchmark sobre sitios legitimos).
+    """
+    chain = tuple(chain) or (url,)
+    redirigida = len(chain) > 1
+    acortador = next((r for r in map(check_shortener, chain) if r.triggered), None)
+    longitud = check_url_length(chain[0])
+    if not longitud.triggered and redirigida:
+        longitud = check_url_length(_without_query(url))
     checks = [
-        check_url_length(url),
+        longitud,
         check_ip_literal(url),
-        check_shortener(url),
+        acortador or check_shortener(url),
         check_suspicious_tld(url),
         check_punycode(url),
     ]

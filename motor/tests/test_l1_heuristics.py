@@ -158,3 +158,42 @@ def test_run_l1_returns_hit_for_suspicious_tld():
 def test_run_l1_acumula_varias_senales():
     hits = run_l1("http://xn--80ak6aa92e.tk/login")
     assert {h.score for h in hits} == {SUSPICIOUS_TLD_SCORE, PUNYCODE_SCORE}
+
+
+# --- L1 sobre la cadena de redirecciones ---
+
+
+def test_los_redirectores_de_qr_dinamicos_cuentan_como_acortador():
+    for host in ("qrco.de", "q-r.to", "l.ead.me"):
+        assert check_shortener(f"https://{host}/abc").triggered is True
+
+
+def test_un_acortador_en_un_salto_intermedio_se_sigue_detectando():
+    # Resolver bit.ly no puede borrar la senal de que el QR escondia su destino.
+    hits = run_l1("https://destino.example/", ["https://bit.ly/x", "https://destino.example/"])
+    assert [h.score for h in hits] == [SHORTENER_SCORE]
+    assert "bit.ly" in hits[0].reason
+
+
+def test_la_query_de_un_destino_alcanzado_por_redireccion_no_cuenta_para_la_longitud():
+    # Portada legitima que redirige a un SSO con tokens en la query.
+    destino = "https://login.example/auth?state=" + "x" * 200
+    assert run_l1(destino, ["https://example.com/", destino]) == []
+
+
+def test_la_ruta_larga_de_un_destino_redirigido_si_cuenta():
+    destino = "https://phish.example/" + "a" * 120
+    hits = run_l1(destino, ["https://corto.example/", destino])
+    assert [h.score for h in hits] == [URL_LENGTH_SCORE]
+
+
+def test_la_url_del_qr_se_mide_completa_aunque_redirija():
+    # La query del QR la escribio quien lo imprimio: esa si es senal.
+    origen = "https://corto.example/?t=" + "x" * 120
+    hits = run_l1("https://destino.example/", [origen, "https://destino.example/"])
+    assert [h.score for h in hits] == [URL_LENGTH_SCORE]
+
+
+def test_sin_redireccion_la_query_sigue_contando():
+    url = "https://example.com/?q=" + "x" * 120
+    assert [h.score for h in run_l1(url, [url])] == [URL_LENGTH_SCORE]

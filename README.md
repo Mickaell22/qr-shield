@@ -110,8 +110,10 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
   Revisa la cadena de redirecciones completa, asi que tambien detecta un salto
   intermedio listado. Una URL listada basta para el rojo.
 - **Metricas por capa (RF-008)** — tiempo por capa y total, capa responsable del
-  veredicto, saltos de la trazabilidad y estado del interruptor A/B, en la respuesta
-  y como registro JSON anonimizado.
+  veredicto, saltos de la trazabilidad y estado del interruptor A/B, en la respuesta,
+  como registro JSON anonimizado y persistido en PostgreSQL.
+- **Benchmark A/B** (`motor/benchmark.py`) — corre un dataset etiquetado con y sin
+  trazabilidad y reporta precision, recall, latencia por capa y la comparacion pareada.
 - **Tests automatizados** con pytest sobre las heuristicas, el endpoint y las metricas.
 
 ### Planificado
@@ -119,7 +121,7 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 - **Capas L4 y L5** que minimizan llamadas a APIs externas y respetan cuotas free tier.
 - **Validacion de dominios** contra listados de dominios legitimos, y antiguedad del
   dominio via WHOIS como senal adicional.
-- **Panel de metricas** que agregue los registros por capa y calcule precision,
+- **Panel de metricas** que agregue los registros persistidos por capa y calcule precision,
   exhaustividad y la proporcion de detecciones locales (L1-L3) frente a externas (L4-L5).
 - **Escaneo nativo de QR** en Android con ML Kit de Google.
 - **Interceptacion en navegador** de codigos QR embebidos en paginas.

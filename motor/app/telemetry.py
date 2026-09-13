@@ -20,6 +20,7 @@ from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 
+from app import cache
 from app.config import METRICS_LOG_URLS, REDIRECT_TRACING_ENABLED
 
 # Logger con nombre tecnico, no el del producto: PRODUCT_NAME es configurable y
@@ -142,12 +143,64 @@ class AnalysisMetrics:
     def emit(self, **kwargs) -> dict:
         """Registra el analisis como una linea JSON y devuelve el registro.
 
-        ponytail: se escribe con `logging` de la stdlib, en el mismo hilo del
-        request. Techo conocido: es una escritura sincrona, asi que un sink
-        lento (RF-008 avisa del riesgo) frena la respuesta. Alcanza mientras el
-        destino sea stdout. Camino de upgrade cuando entre la persistencia en
-        Postgres: QueueHandler + un worker que drene la cola.
+        La linea de log es sincrona pero va a stdout, que no frena. La escritura
+        lenta, la de PostgreSQL, no se hace aca: el endpoint la agenda con
+        `persist` para despues de enviar la respuesta.
         """
         registro = self.record(**kwargs)
         logger.info(json.dumps(registro, ensure_ascii=False))
         return registro
+
+
+# --- Persistencia de los registros (fuente del panel de RF-008) ---
+
+# El registro se guarda entero como jsonb: el panel y el reporte de validacion
+# lo consultan con operadores jsonb, y un campo nuevo de las metricas no obliga
+# a migrar columnas. La URL ya viene anonimizada desde `record`.
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS analysis_metrics (
+    id         bigserial PRIMARY KEY,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    record     jsonb NOT NULL
+);
+CREATE INDEX IF NOT EXISTS analysis_metrics_created_at_idx ON analysis_metrics (created_at);
+"""
+
+
+def init_schema() -> bool:
+    """Crea la tabla si hay base configurada. Devuelve si quedo utilizable.
+
+    Comparte base y pool con la cache L2: no hay una segunda conexion que
+    configurar. Igual que la cache, un fallo no impide arrancar el motor.
+    """
+    if not cache.enabled():
+        return False
+    try:
+        with cache.pool().connection() as conn:
+            conn.execute(SCHEMA)
+        return True
+    except Exception as exc:
+        logger.warning("persistencia de metricas no disponible: %s", type(exc).__name__)
+        return False
+
+
+def persist(registro: dict) -> bool:
+    """Guarda el registro. Devuelve si se llego a escribir.
+
+    Corre como tarea de fondo del endpoint, despues de enviar la respuesta: un
+    PostgreSQL lento no puede comerse el SLA de 3s. Y como la cache, perder un
+    registro de metricas nunca puede costarle el veredicto al usuario, asi que
+    los errores se loguean y no suben.
+    """
+    if not cache.enabled():
+        return False
+    try:
+        with cache.pool().connection() as conn:
+            conn.execute(
+                "INSERT INTO analysis_metrics (record) VALUES (%s)",
+                (json.dumps(registro, ensure_ascii=False),),
+            )
+        return True
+    except Exception as exc:
+        logger.warning("no se pudo persistir el registro de metricas: %s", type(exc).__name__)
+        return False

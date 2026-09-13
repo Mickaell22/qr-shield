@@ -1,3 +1,6 @@
+import socket
+import time
+
 import httpx
 import pytest
 
@@ -145,3 +148,37 @@ def test_identity_no_toca_la_url():
     assert trace.hops == 0
     assert not trace.rewrote_url
     assert trace.final_url == "https://example.com/"
+
+
+def test_un_salto_lento_no_se_pasa_del_presupuesto_y_conserva_lo_alcanzado():
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "a.example":
+            return httpx.Response(302, headers={"location": "https://lento.example/"})
+        time.sleep(1)
+        return httpx.Response(200)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=False)
+    inicio = time.monotonic()
+    trace = resolve_chain(
+        "https://a.example/", client=client, total_timeout=0.2, allow_private_hosts=True
+    )
+    # El chequeo entre saltos no alcanza: el salto colgado se abandona a tiempo.
+    assert time.monotonic() - inicio < 0.5
+    assert not trace.resolved
+    assert "tiempo total" in trace.reason
+    assert trace.chain == ("https://a.example/", "https://lento.example/")
+
+
+def test_un_dns_colgado_no_se_pasa_del_presupuesto(monkeypatch):
+    # getaddrinfo no tiene timeout en la stdlib: sin el tope duro, esto colgaba
+    # el analisis varios segundos (9.5s medidos en el benchmark).
+    def dns_colgado(*args, **kwargs):
+        time.sleep(1)
+        raise socket.gaierror("timeout")
+
+    monkeypatch.setattr(socket, "getaddrinfo", dns_colgado)
+    inicio = time.monotonic()
+    trace = resolve_chain("https://a.example/", total_timeout=0.2)
+    assert time.monotonic() - inicio < 0.5
+    assert not trace.resolved
+    assert "tiempo total" in trace.reason

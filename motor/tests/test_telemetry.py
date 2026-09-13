@@ -1,9 +1,10 @@
 import json
 import logging
+import os
 
 import pytest
 
-from app import telemetry
+from app import cache, telemetry
 from app.telemetry import AnalysisMetrics
 
 
@@ -115,3 +116,44 @@ def test_emit_escribe_una_linea_json_parseable(caplog):
         )
     # El log es la fuente del reporte de validacion: si no parsea, no hay metricas.
     assert json.loads(caplog.records[0].message) == registro
+
+
+# --- Persistencia en PostgreSQL ---
+
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "")
+
+
+def test_sin_base_configurada_no_se_persiste(monkeypatch):
+    monkeypatch.setattr(cache, "DATABASE_URL", "")
+    assert telemetry.init_schema() is False
+    assert telemetry.persist({"verdict": "green"}) is False
+
+
+def test_una_base_caida_no_revienta_la_persistencia(monkeypatch):
+    # Perder un registro de metricas no puede costarle el veredicto al usuario.
+    # Cualquier valor no vacio enciende la capa; el pool roto hace que nunca se use.
+    monkeypatch.setattr(cache, "DATABASE_URL", "configurada")
+
+    def _revienta():
+        raise OSError("conexion rechazada")
+
+    monkeypatch.setattr(cache, "pool", _revienta)
+    assert telemetry.init_schema() is False
+    assert telemetry.persist({"verdict": "green"}) is False
+
+
+@pytest.mark.skipif(not TEST_DATABASE_URL, reason="requiere TEST_DATABASE_URL")
+def test_el_registro_se_guarda_entero_como_jsonb(monkeypatch):
+    monkeypatch.setattr(cache, "DATABASE_URL", TEST_DATABASE_URL)
+    monkeypatch.setattr(cache, "_pool", None)
+    assert telemetry.init_schema() is True
+    with cache.pool().connection() as conn:
+        conn.execute("TRUNCATE analysis_metrics")
+
+    registro = _registro(_metricas(("redirects", 0, None), ("L1", 70, None)), verdict="red")
+    assert telemetry.persist(registro) is True
+
+    with cache.pool().connection() as conn:
+        (guardado,) = conn.execute("SELECT record FROM analysis_metrics").fetchone()
+    assert guardado == registro
+    cache.close()

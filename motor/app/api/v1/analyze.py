@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel, HttpUrl
 
-from app import cache, urlhaus
+from app import cache, telemetry, urlhaus
 from app.config import REDIRECT_TRACING_ENABLED
 from app.detectors.l1_heuristics import run_l1
 from app.redirects import RedirectTrace, resolve_chain
@@ -55,7 +55,7 @@ class AnalyzeResponse(BaseModel):
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
-def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
+def analyze(req: AnalyzeRequest, background_tasks: BackgroundTasks) -> AnalyzeResponse:
     url = str(req.url)
     metrics = AnalysisMetrics()
 
@@ -65,12 +65,14 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         trace = resolve_chain(url) if REDIRECT_TRACING_ENABLED else RedirectTrace.identity(url)
         medicion.hits = trace.hops
 
+    # L1 recibe tambien la cadena: la senal de acortador y la URL del QR se
+    # pierden si solo mira el destino (ver run_l1).
     # L1 corre siempre, incluso si despues la cache resuelve: es local e
     # instantanea, su resultado es el que vale si la cache falla, y registrar su
     # score en las metricas permite contrastar la senal local contra el
     # veredicto consolidado.
     with metrics.measure("L1") as medicion:
-        hits = run_l1(trace.final_url)
+        hits = run_l1(trace.final_url, trace.chain)
         medicion.hits = len(hits)
         medicion.score = sum(h.score for h in hits)
 
@@ -126,6 +128,8 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         redirect_rewrote_url=trace.rewrote_url,
         redirect_resolved=trace.resolved,
     )
+    # Se escribe despues de enviar la respuesta: la base no cuenta para el SLA.
+    background_tasks.add_task(telemetry.persist, registro)
 
     return AnalyzeResponse(
         verdict=verdict,

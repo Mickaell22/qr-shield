@@ -36,6 +36,11 @@ REDIRECT_TIMEOUT_SECONDS = float(os.getenv("REDIRECT_TIMEOUT_SECONDS", "1.5"))
 # dejar margen a las capas L2-L5 que corren despues.
 REDIRECT_TOTAL_TIMEOUT_SECONDS = float(os.getenv("REDIRECT_TOTAL_TIMEOUT_SECONDS", "2.0"))
 
+# Hilos que recorren cadenas en paralelo. El presupuesto total se hace cumplir
+# abandonando el recorrido, que sigue ocupando su hilo hasta terminar: con todos
+# tomados, las cadenas nuevas vencen como no resueltas en vez de colgarse.
+REDIRECT_WORKERS = int(os.getenv("REDIRECT_WORKERS", "32"))
+
 # --- Metricas por capa (RF-008) ---
 
 # Registrar la URL completa en el log de metricas. Por defecto NO: RF-008 pide
