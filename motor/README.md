@@ -288,7 +288,8 @@ python benchmark.py run --dataset ../shared/datasets/benchmark/dataset.csv \
 ```
 
 Escribe `resultados.csv` (una fila por URL y corrida), `reporte.json` y
-`reporte.md`. Metodologia:
+`reporte.md`. Solo los reportes se versionan: los CSV (dataset y resultados)
+llevan URLs de phishing activas y quedan fuera del repo. Metodologia:
 
 - **Maliciosas de PhishTank, no de URLhaus**: URLhaus es el feed de L3 y la
   deteccion saldria circular.
