@@ -322,6 +322,7 @@ TEST_DATABASE_URL=postgresql://USUARIO:CLAVE@localhost:5432/BASE_TEST pytest
 - `v0.1.0`: scaffold + heuristicas L1 + scoring ponderado
 - `v0.1.1`: trazabilidad de redirecciones + metricas por capa
 - `v0.2.0`: cache L2 (PostgreSQL)
-- `v0.3.0` (actual): L3 (feed local de URLhaus)
+- `v0.3.0`: L3 (feed local de URLhaus)
+- `v0.3.1` (actual): persistencia de metricas + benchmark A/B
 - `v0.4.0`: L4 (Google Safe Browsing)
 - `v0.5.0`: L5 (VirusTotal) + deploy Railway
