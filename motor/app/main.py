@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app import cache, urlhaus
+from app import cache, telemetry, urlhaus
 from app.api.v1 import analyze
 from app.config import PRODUCT_NAME, URLHAUS_REFRESH_SECONDS, URLHAUS_RETRY_SECONDS
 
@@ -24,7 +24,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     # Crea la tabla de la cache si falta. Si la base no esta configurada o no
     # responde, el motor arranca igual con la capa L2 desactivada: la deteccion
     # no depende de la cache.
-    cache.init_schema()
+    if cache.init_schema():
+        telemetry.init_schema()
     tarea = asyncio.create_task(_refrescar_urlhaus()) if urlhaus.enabled() else None
     yield
     if tarea is not None:

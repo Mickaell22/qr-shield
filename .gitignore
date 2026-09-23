@@ -106,6 +106,8 @@ pgdata/
 
 # ---------- Datasets / cache pesado ----------
 shared/datasets/raw/
+# Los CSV del benchmark llevan URLs de phishing activas; solo se versionan los reportes.
+shared/datasets/benchmark/**/*.csv
 shared/datasets/*.tar.gz
 shared/datasets/*.zip
 motor/data/phishtank_cache/

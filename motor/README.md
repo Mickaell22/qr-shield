@@ -113,6 +113,10 @@ Comportamiento:
 - Pide solo cabeceras: `HEAD`, con fallback a `GET` en streaming sin descargar
   el cuerpo si el servidor no soporta `HEAD`.
 - Detecta bucles registrando las URLs ya visitadas.
+- El presupuesto total (`REDIRECT_TOTAL_TIMEOUT_SECONDS`) es un **tope duro**: si
+  un salto se cuelga (DNS lento, servidor que no responde), la cadena se abandona
+  a tiempo con lo alcanzado. Los recorridos corren en un pool de
+  `REDIRECT_WORKERS` hilos.
 - Si supera el limite de saltos o el presupuesto de tiempo, la reporta como **no
   resuelta** y sigue el analisis con la ultima URL alcanzada, agregando el motivo
   a `reasons`.
@@ -146,6 +150,15 @@ El veredicto sale de ese score:
 Pesos actuales por heuristica: punycode 50, IP literal 40, TLD sospechoso 35,
 URL larga 30, acortador 25.
 
+L1 corre sobre el destino terminal, con dos excepciones que usan la cadena:
+
+- **Acortador** se revisa en cada salto: resolver `bit.ly/x` no borra la senal de
+  que el QR escondia su destino. Incluye los redirectores de QR dinamicos
+  (`qrco.de`, `q-r.to`, `l.ead.me`).
+- **URL larga** mide la URL del QR completa, pero un destino alcanzado por
+  redireccion se mide sin la query, que la genera el servidor (tokens de login),
+  no quien imprimio el QR.
+
 El corte en 60 exige **dos senales acumuladas** para llegar a rojo: la heuristica
 L1 mas fuerte (punycode, 50) no basta por si sola, porque un dominio IDN legitimo
 la dispara igual. Las capas siguientes suman sus resultados al mismo score, sin
@@ -162,7 +175,7 @@ La respuesta trae el desglose en `metrics`:
 | Campo | Significado |
 |---|---|
 | `metrics.total_ms` | Tiempo total del analisis |
-| `metrics.deciding_layer` | Capa responsable del veredicto: la ultima que aporto puntos; si ninguna aporto (verde), la ultima que corrio |
+| `metrics.deciding_layer` | Capa responsable del veredicto: la que corto la cascada; si ninguna corto, la ultima que aporto puntos; si ninguna aporto (verde), `cascade` |
 | `metrics.layers[].layer` | Identificador de la capa (`redirects`, `L1`, ...) |
 | `metrics.layers[].duration_ms` | Tiempo de esa capa |
 | `metrics.layers[].score` | Puntos que aporto al total |
@@ -185,9 +198,15 @@ interruptor `tracing_enabled` (lo que separa la corrida A de la B del benchmark)
 ```
 
 **La URL se registra anonimizada** (hash truncado): el requisito pide registro
-anonimo y la URL que escaneo un usuario no tiene por que quedar en el log. Para
-el benchmark, donde hace falta cruzar cada analisis con la etiqueta del dataset,
-se activa con `METRICS_LOG_URLS=true`.
+anonimo y la URL que escaneo un usuario no tiene por que quedar en el log. Si
+hace falta la URL en claro (depuracion), se activa con `METRICS_LOG_URLS=true`.
+
+**Persistencia.** Con `DATABASE_URL` configurada, el mismo registro se guarda en
+la tabla `analysis_metrics` (columna `record` en jsonb), que es la fuente del
+panel de metricas. Se escribe como tarea de fondo, despues de enviar la
+respuesta, asi que la base no cuenta para el SLA; y si la escritura falla se
+pierde el registro, nunca el veredicto. La tabla se crea al arrancar, junto con
+la de la cache.
 
 ## Cache de veredictos (L2)
 
@@ -245,6 +264,46 @@ una respuesta sin URLs, conserva el ultimo feed bueno.
 
 Como L2 va antes que L3, un verde cacheado se sigue sirviendo aunque la URL entre
 al feed despues, hasta que vence su TTL de 6 h.
+
+## Benchmark A/B (objetivo especifico 4)
+
+`benchmark.py` pasa un dataset etiquetado por la cascada dos veces, con y sin
+trazabilidad, y reporta precision, recall, F1, tasa de falsos positivos,
+latencia p50/p95 por capa, la capa responsable de cada deteccion y la
+comparacion pareada entre corridas (pares discordantes y prueba exacta de
+McNemar).
+
+```bash
+# Datos crudos (no se versionan, ver .gitignore):
+#   PhishTank:  https://data.phishtank.com/data/online-valid.csv
+#   Tranco:     https://tranco-list.eu/ (top 1M o un recorte del top 10k)
+python benchmark.py dataset --phishing ../shared/datasets/raw/phishtank/online-valid.csv \
+    --legit ../shared/datasets/raw/tranco/top-10k.csv --n 500 --seed 42 \
+    --out ../shared/datasets/benchmark/dataset.csv
+
+# Con las variables del .env exportadas (para cargar el feed de L3):
+set -a && . ./.env && set +a
+python benchmark.py run --dataset ../shared/datasets/benchmark/dataset.csv \
+    --out ../shared/datasets/benchmark/resultados --workers 8
+```
+
+Escribe `resultados.csv` (una fila por URL y corrida), `reporte.json` y
+`reporte.md`. Solo los reportes se versionan: los CSV (dataset y resultados)
+llevan URLs de phishing activas y quedan fuera del repo. Metodologia:
+
+- **Maliciosas de PhishTank, no de URLhaus**: URLhaus es el feed de L3 y la
+  deteccion saldria circular.
+- **Las dos corridas en el mismo proceso**, sobre el mismo snapshot del feed L3,
+  para que la diferencia medida sea solo la de la trazabilidad.
+- **Cache L2 desactivada**: la segunda corrida serviria desde la cache lo que
+  calculo la primera. L2 no cambia la deteccion, solo la latencia.
+- **Latencia con concurrencia**: con varios `--workers` las peticiones de la
+  trazabilidad compiten por red. Para latencias de referencia, `--workers 1`.
+- **Sesgo conocido de la muestra legitima**: Tranco aporta portadas de sitios, no
+  URLs de QR reales, asi que la tasa de falsos positivos no refleja QR legitimos
+  que pasan por un acortador o un redirector de QR dinamico.
+- **Criterio estricto** (solo rojo cuenta como deteccion) y **amplio** (amarillo
+  o rojo), porque el cliente ya advierte al usuario desde el amarillo.
 
 ## Tests
 
