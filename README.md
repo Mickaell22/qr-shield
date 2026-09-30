@@ -118,6 +118,8 @@ Detectar y clasificar al menos el **85%** de URLs maliciosas del benchmark
 
 ### Planificado
 
+- **Rate limiting por IP** en `/v1/analyze` antes del despliegue publico, para que un
+  cliente abusivo no agote las cuotas de las capas externas.
 - **Capas L4 y L5** que minimizan llamadas a APIs externas y respetan cuotas free tier.
 - **Validacion de dominios** contra listados de dominios legitimos, y antiguedad del
   dominio via WHOIS como senal adicional.
