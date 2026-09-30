@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'config.dart';
+import 'home_page.dart';
+import 'motor_client.dart';
 
-void main() => runApp(const App());
+void main() => runApp(
+  App(client: motorUrl.isEmpty ? null : MotorClient(http.Client(), motorUrl)),
+);
 
 class App extends StatelessWidget {
-  const App({super.key});
+  final MotorClient? client;
+  const App({super.key, required this.client});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: productName,
       theme: ThemeData(colorSchemeSeed: Colors.indigo),
-      home: Scaffold(
-        appBar: AppBar(title: const Text(productName)),
-        body: Center(
-          child: Text(
-            motorUrl.isEmpty
-                ? 'Falta configurar MOTOR_URL al compilar.'
-                : 'Motor: $motorUrl',
-          ),
-        ),
-      ),
+      home: HomePage(client: client),
     );
   }
 }
