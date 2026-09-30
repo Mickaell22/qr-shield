@@ -34,6 +34,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+# La regla de arriba es de Python: sin esta excepcion ignora el codigo de la app.
+!app/lib/
 parts/
 sdist/
 var/
