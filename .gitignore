@@ -112,6 +112,8 @@ shared/datasets/raw/
 shared/datasets/benchmark/**/*.csv
 shared/datasets/*.tar.gz
 shared/datasets/*.zip
+# PDF de QR de prueba: se regenera con shared/qr-prueba/generar_pdf.py.
+shared/qr-prueba/*.pdf
 motor/data/phishtank_cache/
 motor/data/*.csv
 

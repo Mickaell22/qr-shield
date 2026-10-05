@@ -21,8 +21,10 @@ final _green = {
   'metrics': {'total_ms': 80.0, 'deciding_layer': 'cascade', 'layers': []},
 };
 
-App appWith(MockClientHandler handler) =>
-    App(client: MotorClient(MockClient(handler), 'http://motor.test'));
+App appWith(MockClientHandler handler, {String? scanned}) => App(
+  client: MotorClient(MockClient(handler), 'http://motor.test'),
+  scan: (_) async => scanned,
+);
 
 Future<void> analyze(WidgetTester tester, String text) async {
   await tester.enterText(find.byType(TextField), text);
@@ -90,5 +92,50 @@ void main() {
     await tester.tap(find.text('Reintentar'));
     await tester.pumpAndSettle();
     expect(find.text('Seguro'), findsOneWidget);
+  });
+
+  testWidgets('QR escaneado con enlace se analiza', (tester) async {
+    String? sent;
+    await tester.pumpWidget(
+      appWith((req) async {
+        sent = (jsonDecode(req.body) as Map)['url'] as String;
+        return http.Response(jsonEncode(_green), 200);
+      }, scanned: 'https://www.x.com'),
+    );
+
+    await tester.tap(find.text('Escanear QR'));
+    await tester.pumpAndSettle();
+
+    expect(sent, 'https://www.x.com');
+    expect(find.text('Seguro'), findsOneWidget);
+  });
+
+  testWidgets('QR escaneado que no es enlace se informa', (tester) async {
+    var calls = 0;
+    await tester.pumpWidget(
+      appWith((_) async {
+        calls++;
+        return http.Response('', 500);
+      }, scanned: 'BEGIN:VCARD\nFN:Ana\nEND:VCARD'),
+    );
+
+    await tester.tap(find.text('Escanear QR'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('El contenido es un contacto, no un enlace.'),
+      findsOneWidget,
+    );
+    expect(calls, 0);
+  });
+
+  testWidgets('volver del escaner sin leer no hace nada', (tester) async {
+    await tester.pumpWidget(appWith((_) async => http.Response('', 500)));
+
+    await tester.tap(find.text('Escanear QR'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.text('Escanear QR'), findsOneWidget);
   });
 }
