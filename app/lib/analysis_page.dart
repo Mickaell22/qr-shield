@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'motor_client.dart';
+import 'result_view.dart';
 
 const _errorMessages = {
   MotorError.unreachable:
@@ -49,7 +50,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 : 'Ocurrió un error inesperado.';
             return _ErrorView(message: message, onRetry: _retry);
           }
-          return _ResultView(url: widget.url, result: result);
+          return ResultView(result: result);
         },
       ),
     );
@@ -77,32 +78,6 @@ class _ErrorView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ponytail: vista minima para cerrar el flujo; el semaforo completo, los
-// motivos y la cadena de redirecciones llegan en el paso de resultado.
-class _ResultView extends StatelessWidget {
-  final String url;
-  final AnalyzeResult result;
-  const _ResultView({required this.url, required this.result});
-
-  @override
-  Widget build(BuildContext context) {
-    final label = switch (result.verdict) {
-      Verdict.green => 'Seguro',
-      Verdict.yellow => 'Sospechoso',
-      Verdict.red => 'Peligroso',
-    };
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Text(label, style: Theme.of(context).textTheme.headlineMedium),
-        Text('Puntaje de riesgo: ${result.score}/100'),
-        const SizedBox(height: 8),
-        SelectableText(url),
-      ],
     );
   }
 }
