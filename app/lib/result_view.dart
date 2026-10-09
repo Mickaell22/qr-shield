@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'motor_client.dart';
+import 'open_link.dart';
 
 // El veredicto se comunica con icono y texto ademas del color: el color solo
 // no alcanza para daltonismo. Primer plano oscuro sobre fondo claro (>7:1).
@@ -35,7 +36,14 @@ const _layers = {
 
 class ResultView extends StatelessWidget {
   final AnalyzeResult result;
-  const ResultView({super.key, required this.result});
+
+  /// Abre la URL fuera de la app. Inyectable para testear sin navegador.
+  final Launcher launch;
+  const ResultView({
+    super.key,
+    required this.result,
+    this.launch = launchExternal,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +131,20 @@ class ResultView extends StatelessWidget {
           '${_layers[result.decidingLayer] ?? result.decidingLayer}',
           style: text.bodySmall,
         ),
+        const SizedBox(height: 24),
+        // Nunca se abre solo: el usuario decide despues de ver el veredicto.
+        if (result.verdict == Verdict.green)
+          FilledButton.icon(
+            onPressed: () => openAnalyzedLink(context, result, launch),
+            icon: const Icon(Icons.open_in_new),
+            label: const Text('Abrir enlace'),
+          )
+        else
+          OutlinedButton.icon(
+            onPressed: () => openAnalyzedLink(context, result, launch),
+            icon: const Icon(Icons.open_in_new),
+            label: const Text('Abrir de todos modos'),
+          ),
       ],
     );
   }
